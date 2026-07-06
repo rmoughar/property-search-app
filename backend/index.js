@@ -1,8 +1,10 @@
 import express from "express";
 import pool from './pool.js';
+import propertiesRouter from './properties.js'
+import 'dotenv/config';
 
 const app = express();
-const port = 3000;
+const port =  process.env.BACKEND_PORT || 4000;
 
 app.get('/', (req, res) => {
     res.send(`
@@ -53,3 +55,5 @@ app.listen(port, (err) => {
     }
     console.log(`Example app listening on port ${port}`);
 });
+
+app.use('/properties', propertiesRouter);
