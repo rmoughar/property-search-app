@@ -1,5 +1,5 @@
 import express from 'express';
-import pool from './pool.js';
+import pool from '../config/pool.js';
 
 
 const propertiesRouter = express.Router();
@@ -10,15 +10,17 @@ let sqlQuery = "SELECT * FROM rets_property"
 propertiesRouter.get('/', async (req,res) => {
     try{
         let sqlQuery = "SELECT * FROM rets_property";
+        let countQuery = "SELECT COUNT(*) FROM rets_property";
         const conditions = [];
         const values = [];
 
+        //Confirms param validity and adds to query
         function handleNum(input, condition){
             if(!(typeof input === 'number')){
-                res.status(400).send(`${condition} must be a valid number!`)
+                return res.status(400).send(`${condition} must be a valid number!`)
             }
             if(!(Number.isFinite(input))){
-                res.status(400).send(`${condition} must be a finite number!`)
+                return res.status(400).send(`${condition} must be a finite number!`)
             }
             values.push(input);
         };
@@ -55,7 +57,13 @@ propertiesRouter.get('/', async (req,res) => {
 
         if (conditions.length !== 0){
             sqlQuery += ' WHERE ' + conditions.join(' AND ');
+            countQuery += ' WHERE ' + conditions.join(' AND ');
         }
+
+        console.log("count query:", countQuery);
+        const [countRows] = await pool.query(
+            countQuery,values
+        )
 
         sqlQuery += ' ORDER BY id LIMIT ? OFFSET ?';
         let limit = 20;
@@ -63,6 +71,9 @@ propertiesRouter.get('/', async (req,res) => {
 
         if(req.query.limit){
             limit = Number(req.query.limit);
+            if(limit <= 0){
+                return res.status(400).send(`Limit must be greater than 0!`);
+            }
             handleNum(limit, 'limit');
         }
         else values.push(limit);
@@ -73,15 +84,19 @@ propertiesRouter.get('/', async (req,res) => {
         }
         else values.push(offset); 
 
-        console.log("query:", sqlQuery)
-        console.log("values:", values)
+        console.log("query:", sqlQuery);
+        console.log("values:", values);
+
+        //Uses parameterized query to defend against SQLi
         const [results] = await pool.query(
             sqlQuery,values
         )
         
         res.json({
-            total: results.length,
-            listings: results
+            total: countRows[0]["COUNT(*)"],
+            limit: req.query.limit ?? limit,
+            offset: req.query.offset ?? offset,
+            results: results
         });
     }
     catch (err){
@@ -90,13 +105,6 @@ propertiesRouter.get('/', async (req,res) => {
     }
     
     
-})
-
-propertiesRouter.get('/test', (req,res) => {
-    res.json({
-        limit: req.query.limit,
-        offset: req.query.offset
-    });
 })
 
 export default propertiesRouter;
