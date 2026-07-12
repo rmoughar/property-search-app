@@ -107,4 +107,83 @@ propertiesRouter.get('/', async (req,res) => {
     
 })
 
+propertiesRouter.get('/:id', async (req,res) => {
+    try{
+        let sqlQuery = " select * from rets_property where L_ListingID = ?;";
+        let id = req.params.id;
+
+        //Confirms param validity and adds to query
+        function handleNum(input, condition){
+            if(!(typeof input === 'number')){
+                return res.status(400).send(`${condition} must be a valid number!`)
+            }
+            if(!(Number.isFinite(input))){
+                return res.status(400).send(`${condition} must be a finite number!`)
+            }
+        };
+
+        handleNum(Number(id), 'id');
+
+        console.log("query:", sqlQuery);
+        console.log("id:", Number(id));
+
+        //Uses parameterized query to defend against SQLi
+        const [results] = await pool.query(
+            sqlQuery,id
+        )
+
+        if (results.length === 0){
+            return res.status(404).send('Property not found!')
+        }
+        
+        res.json({
+            Property: results[0]
+        });
+    }
+    catch (err){
+        console.error(err);
+        res.status(500).send('Error')
+    }
+})
+
+propertiesRouter.get('/:id/openhouses', async (req,res) => {
+        try{
+        let sqlQuery = " select * from rets_openhouse where L_ListingID = ? ORDER BY OpenHouseDate, OH_StartTime;";
+        let id = req.params.id;
+
+        //Confirms param validity and adds to query
+        function handleNum(input, condition){
+            if(!(typeof input === 'number')){
+                return res.status(400).send(`${condition} must be a valid number!`)
+            }
+            if(!(Number.isFinite(input))){
+                return res.status(400).send(`${condition} must be a finite number!`)
+            }
+
+            if(!(Number.isFinite(input))){
+                return res.status(400).send(`${condition} must be a finite number!`)
+            }
+        };
+
+        handleNum(Number(id), 'id');
+
+        console.log("query:", sqlQuery);
+        console.log("id:", Number(id));
+
+        //Uses parameterized query to defend against SQLi
+        const [results] = await pool.query(
+            sqlQuery,id
+        )
+
+        
+        res.json({
+            Openhouses: results
+        });
+    }
+    catch (err){
+        console.error(err);
+        res.status(500).send('Error')
+    }
+})
+
 export default propertiesRouter;
