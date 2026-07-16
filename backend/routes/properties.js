@@ -6,7 +6,6 @@ const propertiesRouter = express.Router();
 
 let sqlQuery = "SELECT * FROM rets_property"
 
-
 propertiesRouter.get('/', async (req,res) => {
     try{
         let sqlQuery = "SELECT * FROM rets_property";
@@ -109,20 +108,21 @@ propertiesRouter.get('/', async (req,res) => {
 
 propertiesRouter.get('/:id/openhouses', async (req,res) => {
         try{
-        let sqlQuery = " select * from rets_openhouse where L_ListingID = ? ORDER BY OpenHouseDate, OH_StartTime;";
-        let id = req.params.id;
+        const sqlQuery = " select * from rets_openhouse where L_ListingID = ? ORDER BY OpenHouseDate, OH_StartTime;";
+        const validQuery = 'SELECT 1 FROM rets_property WHERE L_ListingID = ?';
+        const id = req.params.id;
 
         //Confirms param validity and adds to query
         function handleNum(input, condition){
-            if(!(typeof input === 'number')){
-                return res.status(400).send(`${condition} must be a valid number!`)
+            if(!(Number.isInteger(input))){
+                return res.status(400).send(`${condition} must be a valid number!`);
             }
             if(!(Number.isFinite(input))){
-                return res.status(400).send(`${condition} must be a finite number!`)
+                return res.status(400).send(`${condition} must be a finite number!`);
             }
 
-            if(!(Number.isFinite(input))){
-                return res.status(400).send(`${condition} must be a finite number!`)
+            if(input <= 0){
+                return res.status(400).send(`${condition} must be a positive number!`)
             }
         };
 
@@ -131,10 +131,17 @@ propertiesRouter.get('/:id/openhouses', async (req,res) => {
         /*console.log("query:", sqlQuery);
         console.log("id:", Number(id));*/
 
-        //Uses parameterized query to defend against SQLi
+        const [property] = await pool.query(
+            validQuery,[id]
+        );
+
+        if (property.length === 0) {
+            return res.status(404).send("Property ID not recognized!");
+        }
+
         const [results] = await pool.query(
-            sqlQuery,id
-        )
+            sqlQuery,[id]
+        );
 
         
         res.json({
