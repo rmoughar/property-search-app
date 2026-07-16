@@ -1,8 +1,10 @@
 import express from "express";
 import propertiesRouter from './routes/properties.js'
 import healthRouter from "./routes/health.js";
-
+import cors from "cors";
 const app = express();
+
+app.use(cors({origin: 'http://127.0.0.1:5173'}));
 
 app.use((req, res, next) => {
     if(req.originalUrl === '/favicon.ico'){
