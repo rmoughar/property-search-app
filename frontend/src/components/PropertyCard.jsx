@@ -1,8 +1,15 @@
+import { useState } from "react";
+
 function PropertyCard( {property} ){
+  const [imageError, setImageError] = useState(false);
   let photos;
 
   try{
-    photos = JSON.parse(property.L_Photos ?? "[]")
+    if(property.L_Photos === ''){
+      photos = []
+    }else{
+      photos = JSON.parse(property.L_Photos)
+    }
   }catch(error){
     console.error("Invalid JSON:", error);
     photos = []
@@ -13,10 +20,12 @@ function PropertyCard( {property} ){
   return(
     <li className='gridItem'>
 
-      {image ? (
-        <img src={image} alt={property.L_Address}/>
+      {image && !imageError ? (
+        <img src={image} 
+        alt={property.L_Address}
+        onError={() => setImageError(true)}/>
       ) : (
-        <div>No Image Available</div>
+        <div className="noImage">No Image Available</div>
       )}
 
       <span>${property.L_SystemPrice.toLocaleString()}</span>

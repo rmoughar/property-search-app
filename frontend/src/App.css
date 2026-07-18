@@ -23,3 +23,7 @@ img{
   width: 200px;
   height: auto;
 }
+
+.noImage{
+  color: #c01010;
+}

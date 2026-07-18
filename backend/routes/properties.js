@@ -45,12 +45,12 @@ propertiesRouter.get('/', async (req,res) => {
         }
 
         if(req.query.beds){
-            conditions.push('L_Keyword2 = ?')
+            conditions.push('L_Keyword2 >= ?')
             handleNum(Number(req.query.beds), 'beds');
         }
 
         if(req.query.baths){
-            conditions.push('LM_Dec_3 = ?')
+            conditions.push('LM_Dec_3 >= ?')
             handleNum(Number(req.query.baths), 'baths');
         }
 
