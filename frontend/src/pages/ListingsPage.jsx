@@ -46,7 +46,9 @@ function ListingsPage() {
   return(
     <>
       <span>Showing {properties.results.length} of {properties.total} properties</span>
-      <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
+      <section className="topBar">
+        <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
+      </section>
       
       {properties.total === 0 ? (
         <div>No properties found</div>

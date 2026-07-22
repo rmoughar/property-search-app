@@ -27,3 +27,8 @@ img{
 .noImage{
   color: #c01010;
 }
+
+.topBar{
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
