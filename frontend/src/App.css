@@ -1,34 +1,123 @@
-.grid{
-  display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto;
-  row-gap: 30px;
-  justify-items: center;
+.app-header{
+  text-align: left;
+  padding-left: 1rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid gray;
 }
 
-.gridItem{
-  border: 1px solid #ffffff;
-  padding: 1rem;
-  font-size: 1rem;
+.filters{
+  background: lightgray;
+  border-radius: 12px;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  max-width: 1300px;
+  padding: 0.5rem;
+  margin: 1rem;
+
 }
 
-.gridItem:hover{
-  border-color: #ff0000;
+.filters input,
+.filters select {
+  padding: 0.5rem;
+
+  border: 1px solid white;
+  border-radius: 8px;
+
+  font-size: 1rem;
+  box-sizing: border-box;
+  
+  transition: border-color .2s, box-shadow .2s;
+
+}
+
+.filters input:focus,
+.filters select:focus {
+  outline: none;
+  border-color: #4f8ef7;
+  box-shadow: 0 0 0 3px rgba(79,142,247,.2);
+}
+
+.filters label{
+  font-weight: 600;
+}
+
+.filters button{
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+
+  font-size: 1rem;
+  font-weight: 500;
+
   cursor: pointer;
+  transition: background .2s;
 }
 
-img{
-  width: 200px;
-  height: auto;
+.property-count{
+  text-align: center;
+}
+
+.properties-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+  row-gap: 30px;
+
+  padding-top: 1rem;
+}
+
+.property-card{
+  display: flex;
+  box-shadow: 10px 1px 15px gray;
+  margin: 1rem;
+  font-size: 1rem;
+  flex-direction: column;
+  border-radius: 10px;
+  transition: transform .2s ease;
+}
+
+.property-card img{
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.property-card:hover{
+  outline: 2px solid rgb(165, 20, 20);
+  cursor: pointer;
+  transform: translateY(-3px);
 }
 
 .noImage{
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
   color: #c01010;
 }
 
-.topBar{
-  margin-bottom: 1rem;
-  margin-top: 1rem;
+.info-message{
+  text-align: center;
+  font-size: 2em;
+  font-weight: 100;
+}
+
+.property-info{
+  text-align: left;
+  padding: 0.5rem 0.5rem;
+}
+
+.price{
+  font-weight: bold;
+  color: black;
+  font-size: 1.5rem;
+}
+
+.details{
+font-size: 1.15rem;
+}
+
+.location{
+font-size: 1.15rem;
 }

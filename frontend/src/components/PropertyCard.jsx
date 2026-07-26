@@ -18,7 +18,7 @@ function PropertyCard( {property} ){
   const image = photos[0];
 
   return(
-    <li className='gridItem'>
+    <li className='property-card'>
 
       {image && !imageError ? (
         <img src={image} 
@@ -28,13 +28,22 @@ function PropertyCard( {property} ){
         <div className="noImage">No Image Available</div>
       )}
 
-      <span>${property.L_SystemPrice.toLocaleString()}</span>
-      <span>{property.L_Address}</span>
-      <span>{property.L_City}, {property.L_State}</span>
-      <span>{property.L_Keyword2} Beds</span>
-      <span>{property.LM_Dec_3} Baths</span>
-      <span>{property.LM_Int2_3.toLocaleString()} SQFT</span>
-      
+      <div className="property-info">
+        <div className="price">${property.L_SystemPrice.toLocaleString()}</div>
+        <div className="details">
+          <span><b>{property.L_Keyword2}</b> Bed</span>
+          <span> | </span>
+          <span><b>{property.LM_Dec_3}</b> Ba</span>
+          <span> | </span>
+          <span><b>{property.LM_Int2_3.toLocaleString()}</b> sqft</span>
+        </div>
+
+        <div className="location">
+          <span>{property.L_Address}, </span>
+          <span>{property.L_City}, {property.L_State}, {property.L_Zip}</span>
+        </div>
+        
+      </div>
     </li>
   )
 }

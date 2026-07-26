@@ -40,20 +40,19 @@ function ListingsPage() {
     load();
   }, [])
 
-  if(loading)return <p>loading properties...</p>
-  if(error) return <p>{error.message}</p>
+  if(loading)return <div className="info-message">loading properties...</div>
+  if(error) return <div className="info-message">{error.message}</div>
 
   return(
     <>
-      <span>Showing {properties.results.length} of {properties.total} properties</span>
-      <section className="topBar">
-        <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
-      </section>
+      <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
+      
+      <h2 className="property-count">Showing {properties.results.length} of {properties.total} properties</h2>
       
       {properties.total === 0 ? (
         <div>No properties found</div>
       ): (
-        <div className='grid'>
+        <div className='properties-grid'>
           {properties.results.map(property =>
             <PropertyCard key={property.id} property={property}></PropertyCard>
           )}

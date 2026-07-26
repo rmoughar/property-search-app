@@ -4,7 +4,13 @@ import ListingsPage from './pages/ListingsPage'
 function App() {
   return (
     <>
-      <ListingsPage></ListingsPage>
+      <header className='app-header'>
+        <h1>Property Search</h1>
+      </header>
+      
+      <main>
+        <ListingsPage></ListingsPage>
+      </main>
     </>
   )
 }

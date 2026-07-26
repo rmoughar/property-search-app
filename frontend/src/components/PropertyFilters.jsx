@@ -1,8 +1,8 @@
 function PropertyFilters( {filters, setFilters, onSearch} ){
     
   return(
-    <div>
-      <form onSubmit={(e) => {
+    <div className="filters-box">
+      <form className="filters" onSubmit={(e) => {
         e.preventDefault();
         onSearch();}}>
         
@@ -34,31 +34,35 @@ function PropertyFilters( {filters, setFilters, onSearch} ){
         onChange={e => setFilters((prev) => ({...prev, maxPrice:e.target.value,}))}
         />
 
-        <label htmlFor="beds">Beds: </label>
-        <select
-          id="beds"
-          value={filters.beds}
-          onChange={e => setFilters((prev) => ({...prev, beds:e.target.value,}))}>
-          <option value={''}>Any</option>
-          <option value={'1'}>1+</option>
-          <option value={'2'}>2+</option>
-          <option value={'3'}>3+</option>
-          <option value={'4'}>4+</option>
-          <option value={'5'}>5+</option>
-        </select>
+        <div>
+          <label htmlFor="beds">Beds: </label>
+          <select
+            id="beds"
+            value={filters.beds}
+            onChange={e => setFilters((prev) => ({...prev, beds:e.target.value,}))}>
+            <option value={''}>Any</option>
+            <option value={'1'}>1+</option>
+            <option value={'2'}>2+</option>
+            <option value={'3'}>3+</option>
+            <option value={'4'}>4+</option>
+            <option value={'5'}>5+</option>
+          </select>
+        </div>
 
-        <label htmlFor="baths">Baths: </label>
-        <select
-        id="baths"
-        value={filters.baths}
-        onChange={e => setFilters((prev) => ({...prev, baths:e.target.value,}))}>
-          <option value={''}>Any</option>
-          <option value={'1'}>1+</option>
-          <option value={'2'}>2+</option>
-          <option value={'3'}>3+</option>
-          <option value={'4'}>4+</option>
-          <option value={'5'}>5+</option>
-        </select>
+        <div>
+          <label htmlFor="baths">Baths: </label>
+          <select
+          id="baths"
+          value={filters.baths}
+          onChange={e => setFilters((prev) => ({...prev, baths:e.target.value,}))}>
+            <option value={''}>Any</option>
+            <option value={'1'}>1+</option>
+            <option value={'2'}>2+</option>
+            <option value={'3'}>3+</option>
+            <option value={'4'}>4+</option>
+            <option value={'5'}>5+</option>
+          </select>
+        </div>
 
         <button type="submit">Search</button>
 
