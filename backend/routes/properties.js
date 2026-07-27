@@ -1,5 +1,6 @@
 import express from 'express';
 import pool from '../config/pool.js';
+import e from 'express';
 
 
 const propertiesRouter = express.Router();
@@ -45,12 +46,23 @@ propertiesRouter.get('/', async (req,res) => {
         }
 
         if(req.query.beds){
-            conditions.push('L_Keyword2 >= ?')
+            if(req.query.beds == 5){
+                conditions.push('L_Keyword2 >= ?')
+            }
+            else{
+                conditions.push('L_Keyword2 = ?')
+            }
+            
             handleNum(Number(req.query.beds), 'beds');
         }
 
         if(req.query.baths){
-            conditions.push('LM_Dec_3 >= ?')
+            if(req.query.baths == 5){
+                conditions.push('LM_Dec_3 >= ?')
+            }
+            else{
+                conditions.push('LM_Dec_3 = ?')
+            }
             handleNum(Number(req.query.baths), 'baths');
         }
 
