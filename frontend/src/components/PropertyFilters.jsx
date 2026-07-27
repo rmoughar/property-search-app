@@ -1,3 +1,11 @@
+function formatPrice(value){
+  const digits = value.replace(/\D/g, '');
+
+  if (digits === '') return '';
+  return Number(digits);
+}
+
+
 function PropertyFilters( {filters, setFilters, onSearch} ){
     
   return(
@@ -23,15 +31,21 @@ function PropertyFilters( {filters, setFilters, onSearch} ){
         <input 
         type="text" 
         placeholder="Min Price"
-        value={filters.minPrice}
-        onChange={e => setFilters((prev) => ({...prev, minPrice:e.target.value,}))}
+        value={filters.minPrice === ""
+          ? ""
+          : Number(filters.minPrice).toLocaleString()
+        }
+        onChange={e => setFilters((prev) => ({...prev, minPrice: formatPrice(e.target.value)}))}
         />
 
         <input 
         type="text" 
         placeholder="Max Price"
-        value={filters.maxPrice}
-        onChange={e => setFilters((prev) => ({...prev, maxPrice:e.target.value,}))}
+        value={filters.maxPrice === ""
+          ? ""
+          : Number(filters.maxPrice).toLocaleString()
+        }
+        onChange={e => setFilters((prev) => ({...prev, maxPrice: formatPrice(e.target.value)}))}
         />
 
         <div>
@@ -41,10 +55,10 @@ function PropertyFilters( {filters, setFilters, onSearch} ){
             value={filters.beds}
             onChange={e => setFilters((prev) => ({...prev, beds:e.target.value,}))}>
             <option value={''}>Any</option>
-            <option value={'1'}>1+</option>
-            <option value={'2'}>2+</option>
-            <option value={'3'}>3+</option>
-            <option value={'4'}>4+</option>
+            <option value={'1'}>1</option>
+            <option value={'2'}>2</option>
+            <option value={'3'}>3</option>
+            <option value={'4'}>4</option>
             <option value={'5'}>5+</option>
           </select>
         </div>
@@ -56,10 +70,10 @@ function PropertyFilters( {filters, setFilters, onSearch} ){
           value={filters.baths}
           onChange={e => setFilters((prev) => ({...prev, baths:e.target.value,}))}>
             <option value={''}>Any</option>
-            <option value={'1'}>1+</option>
-            <option value={'2'}>2+</option>
-            <option value={'3'}>3+</option>
-            <option value={'4'}>4+</option>
+            <option value={'1'}>1</option>
+            <option value={'2'}>2</option>
+            <option value={'3'}>3</option>
+            <option value={'4'}>4</option>
             <option value={'5'}>5+</option>
           </select>
         </div>

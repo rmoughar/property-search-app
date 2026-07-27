@@ -50,7 +50,7 @@ function ListingsPage() {
       <h2 className="property-count">Showing {properties.results.length} of {properties.total} properties</h2>
       
       {properties.total === 0 ? (
-        <div>No properties found</div>
+        <div className="info-message">No properties found</div>
       ): (
         <div className='properties-grid'>
           {properties.results.map(property =>
