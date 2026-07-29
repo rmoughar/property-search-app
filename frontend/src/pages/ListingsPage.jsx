@@ -18,48 +18,58 @@ function ListingsPage() {
     minPrice: '', 
     maxPrice: '', 
     beds: '', 
-    baths: ''
+    baths: '',
+    limit: '20',
+    offset: '0'
   });
 
   const [pagination, setPagination] = useState({currentPage: 1, itemsPerPage: 20});
+  const totalPages = Math.ceil(properties.total / pagination.itemsPerPage);
   
+
   const controller = useRef(null);
 
-  async function handleSearch(){
+  function changeCurrentPage(page){
+    setPagination(prev => ({...prev, currentPage:page}))
+  }
+
+  function handleSearch(tempFilters){
+    setFilters(tempFilters);
+    changeCurrentPage(1);
+  } 
+
+  useEffect(() => {
+
     if(controller.current != null){
       controller.current.abort();
     }
 
     controller.current = new AbortController();
 
-    try{
-      setLoading(true);
-      const data = await fetchFilteredProperties(filters, controller.current.signal);
-      setProperties(data);
-    } catch(error){
-      console.error(error.message);
-      setError(error)
-    }finally{
-      setLoading(false);
-    }
-  } 
-
-  useEffect(() => {
-    async function load(){
+    async function loadProperties(){
       try{
-        const data = await fetchFilteredProperties(filters)
-        setProperties(data)
-      }catch(error){
+        setLoading(true);
+
+        const offset = (pagination.currentPage - 1) * pagination.itemsPerPage;
+        const params = {...filters, offset: offset, limit: pagination.itemsPerPage};
+
+        const data = await fetchFilteredProperties(params, controller.current.signal);
+        setProperties(data);
+
+        setError(null)
+        setLoading(false);
+      } catch(error){
+        if(error.name === "AbortError") return;
+
         console.error(error.message);
-        setError(error);
-      } finally{
+        setError(error)
         setLoading(false);
       }
-    }
+    };
 
-    load();
-  }, [])
-  
+    loadProperties();
+  },[filters, pagination.currentPage, pagination.itemsPerPage])
+
   return(
     <>
       <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
@@ -69,7 +79,10 @@ function ListingsPage() {
       {loading ? (
         <div className="info-message">loading properties...</div>
       ) : error ? (
-        <div className="info-message">{error.message}</div>
+        <>
+          {console.log('error:',error)}
+          <div className="info-message">{error.message}</div>
+        </>
       ) : properties.total === 0 ? (
         <div className="info-message">No properties found</div>
       ) : (
@@ -80,7 +93,7 @@ function ListingsPage() {
         </div>
       )}
 
-      <Pagination></Pagination>
+      <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
     </>
   )
 }

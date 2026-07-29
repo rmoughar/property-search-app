@@ -1,4 +1,3 @@
-import { useState } from "react";
 import './Pagination.css';
 
 function buildPageNumbers(currentPage, totalPages){
@@ -25,7 +24,6 @@ function buildPageNumbers(currentPage, totalPages){
     
     pages.sort((a,b) => a - b);
     const sortedPages = [...new Set(pages)].filter(item => (item > 0 && item <= totalPages));
-    console.log('sortedPages:', sortedPages);
     for(let i = 0; i < sortedPages.length - 1; i++){
         if((sortedPages[i+1] - sortedPages[i]) > 1){
             sortedPages.splice(i+1, 0, '...');
@@ -35,10 +33,12 @@ function buildPageNumbers(currentPage, totalPages){
     return sortedPages;
 }
 
-function Pagination() {
-    const totalPages = 24;
-    const [currentPage, setCurrentPage] = useState(1);
+function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
     const pageNumbers = buildPageNumbers(currentPage, totalPages);
+
+    function handleButton(newPage){
+        changeCurrentPage(newPage);
+    };
 
     return (
         <div className="page-container">
@@ -46,17 +46,17 @@ function Pagination() {
                 
                 <button 
                 disabled={currentPage === 1}
-                onClick={() => setCurrentPage(prev => prev - 1)}>
+                onClick={() => handleButton(currentPage - 1)}>
                     {'<'}
                 </button>
 
                 {pageNumbers.map(page => (
-                    <button className={page === currentPage ? "active" : ''} onClick={() => setCurrentPage(page)}>{page}</button>
+                    <button className={page === currentPage ? "active" : ''} onClick={() => handleButton(page)}>{page}</button>
                 ))}
                 
                 <button 
                     disabled={currentPage === totalPages}
-                    onClick={() => setCurrentPage(prev => prev + 1)}>{'>'}
+                    onClick={() => handleButton(currentPage + 1)}>{'>'}
                 </button>
             </div>
         </div>
