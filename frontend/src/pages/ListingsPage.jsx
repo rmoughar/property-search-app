@@ -25,6 +25,7 @@ function ListingsPage() {
 
   const [pagination, setPagination] = useState({currentPage: 1, itemsPerPage: 20});
   const totalPages = Math.ceil(properties.total / pagination.itemsPerPage);
+  const offset = (pagination.currentPage - 1) * pagination.itemsPerPage;
   
 
   const controller = useRef(null);
@@ -49,8 +50,7 @@ function ListingsPage() {
     async function loadProperties(){
       try{
         setLoading(true);
-
-        const offset = (pagination.currentPage - 1) * pagination.itemsPerPage;
+        
         const params = {...filters, offset: offset, limit: pagination.itemsPerPage};
 
         const data = await fetchFilteredProperties(params, controller.current.signal);
@@ -68,13 +68,12 @@ function ListingsPage() {
     };
 
     loadProperties();
-  },[filters, pagination.currentPage, pagination.itemsPerPage])
+  },[filters, pagination.currentPage, pagination.itemsPerPage, offset])
 
   return(
-    <>
+    <div>
       <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
-      
-      <h2 className="property-count">Showing {properties.results.length} of {properties.total} properties</h2>
+     
       
       {loading ? (
         <div className="info-message">loading properties...</div>
@@ -86,15 +85,37 @@ function ListingsPage() {
       ) : properties.total === 0 ? (
         <div className="info-message">No properties found</div>
       ) : (
-        <div className='properties-grid'>
-          {properties.results.map(property =>
-            <PropertyCard key={property.id} property={property}></PropertyCard>
-          )}
+        <div>
+          <div className="page-count-display"> 
+            <div className="property-count"> Showing {offset + 1} - {(offset + Number(pagination.itemsPerPage)) > properties.total ? properties.total : (offset + Number(pagination.itemsPerPage))} of {properties.total} Properties</div>
+            
+            <label className="ipp-label">
+              <span className="ipp-text">Per Page: </span>
+              <select
+              className="items-per-page"
+              value={pagination.itemsPerPage}
+              onChange={(e) => {
+                changeCurrentPage(1);
+                setPagination(prev => ({...prev, itemsPerPage:e.target.value}));
+                }}>
+                <option value={20}>20</option>
+                <option value={40}>40</option>
+                <option value={60}>60</option>
+                <option value={80}>80</option>
+                <option value={100}>100</option>
+              </select>
+           </label>
+          </div>  
+          <div className='properties-grid'>  
+            {properties.results.map(property =>
+              <PropertyCard key={property.id} property={property}></PropertyCard>
+            )}
+          </div>
         </div>
       )}
 
       <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
-    </>
+    </div>
   )
 }
 

@@ -1,17 +1,61 @@
+
+
 .property-count{
   text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .properties-grid{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
   row-gap: 30px;
-
-  padding-top: 1rem;
 }
 
 .info-message{
   text-align: center;
   font-size: 2em;
   font-weight: 100;
+}
+
+.page-count-display{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.25rem 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+
+.items-per-page{
+  padding: 0.5rem;
+
+  border: 1px solid white;
+  border-radius: 8px;
+
+  font-size: 1rem;
+  box-sizing: border-box;
+  
+  transition: border-color .2s, box-shadow .2s;
+
+}
+
+.items-per-page:focus {
+  outline: none;
+  border-color: #4f8ef7;
+  box-shadow: 0 0 0 3px rgba(79,142,247,.2);
+}
+
+.ipp-label{
+  background: lightgray;
+  border-radius: 12px;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ipp-text{
+  font-size: 1.3rem;
+  font-weight: bold;
 }
