@@ -1,9 +1,49 @@
-.page-numbers{
+.page-container{
     display: flex;
-    border: 2px solid red;
+    justify-content: center;
+}
+
+.page-numbers{
+    display: inline-flex;
     justify-content: center;   
+    gap: 30px;
+
+    border-radius: 10px;
+    /* background-color: rgb(202, 200, 200); */
+
+    margin-bottom: 1%;
 }
 
 .page-numbers button {
+    font-size: 1.5rem;
+    color: rgb(54, 45, 45);
+    border-radius: 50%;
+
     background: none;
+    border: none;
+    
+    width: 48px;
+    height: 48px;
+}
+
+.page-numbers button:hover {
+    background-color: lightgray;
+    cursor: pointer;
+    
+    transition: background .2s;
+}
+
+.page-numbers button:disabled {
+    color:black;
+    opacity: 0.5;
+}
+
+.page-numbers button:disabled:hover {
+    background: none;
+    cursor: default;
+}
+
+.page-numbers button.active{
+    background-color: rgb(240, 234, 153);
+    border: 2px solid rgb(211, 175, 128);
 }

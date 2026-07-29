@@ -2,13 +2,27 @@ import { useState } from "react";
 import './Pagination.css';
 
 function buildPageNumbers(currentPage, totalPages){
-    const pages = [];
-    pages.push(
-        1, 
-        totalPages, 
-        currentPage, 
-        currentPage - 1, 
-        currentPage + 1,)
+    const pages = [1, totalPages];
+    
+    if(currentPage <=3){
+        //beginning
+        pages.push(2,3,4,5);
+    } else if (currentPage >= totalPages -2) {
+        //end
+        pages.push(
+            totalPages - 4,
+            totalPages - 3,
+            totalPages - 2,
+            totalPages - 1
+        );
+    } else {
+        //middle
+        pages.push(
+            currentPage - 1, 
+            currentPage, 
+            currentPage + 1,)
+    }
+    
     pages.sort((a,b) => a - b);
     const sortedPages = [...new Set(pages)].filter(item => (item > 0 && item <= totalPages));
     console.log('sortedPages:', sortedPages);
@@ -27,16 +41,24 @@ function Pagination() {
     const pageNumbers = buildPageNumbers(currentPage, totalPages);
 
     return (
-        <div className="page-numbers">
-            {currentPage != 1 && <button onClick={() => setCurrentPage(prev => prev - 1)}>prev</button>}
-            {pageNumbers.map(page => (
-                page === currentPage ? (
-                    <button onClick={() => setCurrentPage(page)}>[{page}]</button>
-                ) : (
-                    <button onClick={() => setCurrentPage(page)}>{page}</button>
-                )
-            ))}
-            {currentPage != totalPages && <button onClick={() => setCurrentPage(prev => prev + 1)}>next</button>}
+        <div className="page-container">
+            <div className="page-numbers">
+                
+                <button 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}>
+                    {'<'}
+                </button>
+
+                {pageNumbers.map(page => (
+                    <button className={page === currentPage ? "active" : ''} onClick={() => setCurrentPage(page)}>{page}</button>
+                ))}
+                
+                <button 
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(prev => prev + 1)}>{'>'}
+                </button>
+            </div>
         </div>
     )
 }
