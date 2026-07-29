@@ -1,0 +1,48 @@
+.property-card{
+  display: flex;
+  box-shadow: 10px 1px 15px gray;
+  margin: 1rem;
+  font-size: 1rem;
+  flex-direction: column;
+  border-radius: 10px;
+  transition: transform .2s ease;
+}
+
+.property-card img{
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.property-card:hover{
+  outline: 2px solid rgb(165, 20, 20);
+  cursor: pointer;
+  transform: translateY(-3px);
+}
+
+.noImage{
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #c01010;
+}
+
+.property-info{
+  text-align: left;
+  padding: 0.5rem 0.5rem;
+}
+
+.price{
+  font-weight: bold;
+  color: black;
+  font-size: 1.5rem;
+}
+
+.details{
+font-size: 1.15rem;
+}
+
+.location{
+font-size: 1.15rem;
+}

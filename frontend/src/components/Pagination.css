@@ -1,0 +1,9 @@
+.page-numbers{
+    display: flex;
+    border: 2px solid red;
+    justify-content: center;   
+}
+
+.page-numbers button {
+    background: none;
+}

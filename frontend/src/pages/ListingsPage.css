@@ -1,0 +1,17 @@
+.property-count{
+  text-align: center;
+}
+
+.properties-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+  row-gap: 30px;
+
+  padding-top: 1rem;
+}
+
+.info-message{
+  text-align: center;
+  font-size: 2em;
+  font-weight: 100;
+}

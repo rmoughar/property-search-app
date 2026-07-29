@@ -1,4 +1,5 @@
 import { useState } from "react";
+import './PropertyCard.css'
 
 function PropertyCard( {property} ){
   const [imageError, setImageError] = useState(false);

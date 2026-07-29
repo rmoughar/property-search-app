@@ -1,4 +1,4 @@
-export async function fetchFilteredProperties(filters){
+export async function fetchFilteredProperties(filters, signal){
   let url = '/api/properties?'
   
   Object.entries(filters).forEach(([key, value]) => {
@@ -8,7 +8,7 @@ export async function fetchFilteredProperties(filters){
 
   console.log(url);
   
-  const response = await fetch(url);
+  const response = await fetch(url, {signal});
   
   if(!response.ok){
         throw new Error('Failed to fetch properties');

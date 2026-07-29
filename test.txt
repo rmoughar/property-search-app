@@ -1,0 +1,21 @@
+return(
+    <>
+      <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
+      
+      <h2 className="property-count">Showing {properties.results.length} of {properties.total} properties</h2>
+      
+      {loading ? (
+        <div className="info-message">loading properties...</div>
+      ) : error ? (
+        <div className="info-message">{error.message}</div>
+      ) : properties.total === 0 ? (
+        <div className="info-message">No properties found</div>
+      ) : (
+        <div className='properties-grid'>
+          {properties.results.map(property =>
+            <PropertyCard key={property.id} property={property}></PropertyCard>
+          )}
+        </div>
+      )}
+    </>
+  )

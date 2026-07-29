@@ -1,3 +1,5 @@
+import "./PropertyFilters.css"
+
 function formatPrice(value){
   const digits = value.replace(/\D/g, '');
 
@@ -9,7 +11,7 @@ function formatPrice(value){
 function PropertyFilters( {filters, setFilters, onSearch} ){
     
   return(
-    <div className="filters-box">
+    <div>
       <form className="filters" onSubmit={(e) => {
         e.preventDefault();
         onSearch();}}>
