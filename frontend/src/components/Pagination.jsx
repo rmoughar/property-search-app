@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './Pagination.css';
 
 function buildPageNumbers(currentPage, totalPages){
@@ -35,6 +36,8 @@ function buildPageNumbers(currentPage, totalPages){
 
 function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
     const pageNumbers = buildPageNumbers(currentPage, totalPages);
+    const [jumpInput, setJumpInput] = useState(null);
+    const [inputValue, setInputValue] = useState(1);
 
     function handleButton(newPage){
         changeCurrentPage(newPage);
@@ -50,8 +53,33 @@ function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
                     {'<'}
                 </button>
 
-                {pageNumbers.map(page => (
-                    <button className={page === currentPage ? "active" : ''} onClick={() => handleButton(page)}>{page}</button>
+                {pageNumbers.map((page, index) => (
+
+                    page === '...' ? (
+                        jumpInput === index ? (
+                           
+                            <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleButton(Number(inputValue));
+                                setJumpInput(null);
+                                setInputValue(null);
+                            }}>
+                                <input 
+                                className='jump-input'
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}></input>
+                            </form>
+
+                        ) : (
+                            <button className={page === currentPage ? "active" : ''} onClick={() => setJumpInput(index)}>{page}</button>
+                        )
+                        
+                    ) : (
+                        <button className={page === currentPage ? "active" : ''} onClick={() => handleButton(page)}>{page}</button>
+                    )
+                    
+                    
                 ))}
                 
                 <button 

@@ -47,3 +47,10 @@
     background-color: rgb(240, 234, 153);
     border: 2px solid rgb(211, 175, 128);
 }
+
+.jump-input{
+    text-align: center;
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.5rem;
+}
