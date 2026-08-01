@@ -87,7 +87,9 @@ function PropertyFilters( {filters, onSearch} ){
 
         <button 
         type="button"
-        onClick={() => onSearch({city: '', zipcode: '', minPrice: '', maxPrice: '', beds: '', baths: ''})}>Clear</button>
+        onClick={() => {
+          setTempFilters({city: '', zipcode: '', minPrice: '', maxPrice: '', beds: '', baths: ''});
+          onSearch({city: '', zipcode: '', minPrice: '', maxPrice: '', beds: '', baths: ''})}}>Clear</button>
       </form>
     </div>
   )

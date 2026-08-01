@@ -27,7 +27,8 @@
 }
 
 
-.items-per-page{
+.items-per-page,
+.sort-by{
   padding: 0.5rem;
 
   border: 1px solid white;
@@ -40,13 +41,15 @@
 
 }
 
-.items-per-page:focus {
+.items-per-page:focus,
+.sort-by:focus{
   outline: none;
   border-color: #4f8ef7;
   box-shadow: 0 0 0 3px rgba(79,142,247,.2);
 }
 
-.ipp-label{
+.ipp-label,
+.sort-label{
   background: lightgray;
   border-radius: 12px;
   padding: 0.4rem 0.6rem;
@@ -55,7 +58,13 @@
   gap: 0.5rem;
 }
 
-.ipp-text{
+.ipp-text,
+.sort-text{
   font-size: 1.3rem;
   font-weight: bold;
+}
+
+.selects{
+  display: flex;
+  gap: 10px;
 }

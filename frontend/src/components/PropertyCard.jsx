@@ -36,7 +36,7 @@ function PropertyCard( {property} ){
           <span> | </span>
           <span><b>{property.LM_Dec_3}</b> Ba</span>
           <span> | </span>
-          <span><b>{property.LM_Int2_3.toLocaleString()}</b> sqft</span>
+          <span><b>{property.LM_Int2_3 != null ? property.LM_Int2_3.toLocaleString() : "N/A"}</b> sqft</span>
         </div>
 
         <div className="location">

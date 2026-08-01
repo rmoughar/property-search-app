@@ -71,12 +71,38 @@ propertiesRouter.get('/', async (req,res) => {
             countQuery += ' WHERE ' + conditions.join(' AND ');
         }
 
+
         //console.log("count query:", countQuery);
         const [countRows] = await pool.query(
             countQuery,values
         )
 
-        sqlQuery += ' ORDER BY id LIMIT ? OFFSET ?';
+        //add order by for sorting to api call
+        if(req.query.sort){
+            const sortColumns = {
+                date: "ListingContractDate",
+                price: "L_SystemPrice",
+                beds: "L_Keyword2",
+                sqft: "LM_Int2_3"
+            };
+
+            const [field, direction] = req.query.sort.split(":");
+            const column = sortColumns[field];
+
+            const validDirections = ["ASC", "DESC"];
+
+            if(!column || !validDirections.includes(direction)) {
+                return res.status(400).send('Must use acceptable sorting parameters');
+            }
+
+            sqlQuery += ` ORDER BY ${column} ${direction}`;
+            
+        }
+        
+        console.log('query:', sqlQuery);
+
+        //Add limit and offset for pagination
+        sqlQuery += ' LIMIT ? OFFSET ?';
         let limit = 20;
         let offset = 0;
 

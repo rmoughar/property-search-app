@@ -27,6 +27,7 @@ function ListingsPage() {
   const totalPages = Math.ceil(properties.total / pagination.itemsPerPage);
   const offset = (pagination.currentPage - 1) * pagination.itemsPerPage;
   
+  const [sort, setSort] = useState('');
 
   const controller = useRef(null);
 
@@ -36,6 +37,7 @@ function ListingsPage() {
 
   function handleSearch(tempFilters){
     setFilters(tempFilters);
+    setSort('');
     changeCurrentPage(1);
   } 
 
@@ -51,7 +53,7 @@ function ListingsPage() {
       try{
         setLoading(true);
         
-        const params = {...filters, offset: offset, limit: pagination.itemsPerPage};
+        const params = {...filters, offset: offset, limit: pagination.itemsPerPage, sort: sort};
 
         const data = await fetchFilteredProperties(params, controller.current.signal);
         setProperties(data);
@@ -68,7 +70,7 @@ function ListingsPage() {
     };
 
     loadProperties();
-  },[filters, pagination.currentPage, pagination.itemsPerPage, offset])
+  },[filters, pagination.currentPage, pagination.itemsPerPage, offset, sort])
 
   return(
     <div>
@@ -89,22 +91,49 @@ function ListingsPage() {
           <div className="page-count-display"> 
             <div className="property-count"> Showing {offset + 1} - {(offset + Number(pagination.itemsPerPage)) > properties.total ? properties.total : (offset + Number(pagination.itemsPerPage))} of {properties.total} Properties</div>
             
-            <label className="ipp-label">
-              <span className="ipp-text">Per Page: </span>
-              <select
-              className="items-per-page"
-              value={pagination.itemsPerPage}
-              onChange={(e) => {
-                changeCurrentPage(1);
-                setPagination(prev => ({...prev, itemsPerPage:e.target.value}));
-                }}>
-                <option value={20}>20</option>
-                <option value={40}>40</option>
-                <option value={60}>60</option>
-                <option value={80}>80</option>
-                <option value={100}>100</option>
-              </select>
-           </label>
+            <div className="selects">
+              <label className="ipp-label">
+                  <span className="ipp-text">Per Page: </span>
+                  <select
+                  className="items-per-page"
+                  value={pagination.itemsPerPage}
+                  onChange={(e) => {
+                    changeCurrentPage(1);
+                    setPagination(prev => ({...prev, itemsPerPage:e.target.value}));
+                    }}>
+                    <option value={20}>20</option>
+                    <option value={40}>40</option>
+                    <option value={60}>60</option>
+                    <option value={80}>80</option>
+                    <option value={100}>100</option>
+                  </select>
+              </label>
+
+              <label className="sort-label">
+                  <span className="sort-text">Sort By: </span>
+                  <select
+                    className="sort-by"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                  >
+                    <option value={''}>Default</option>
+
+                    <option value={'date:DESC'}>Newest</option>
+                    <option value={'date:ASC'}>Oldest</option>
+
+                    <option value={'price:DESC'}>Price ↓</option>
+                    <option value={'price:ASC'}>Price ↑</option>
+
+                    <option value={'sqft:DESC'}>SQFT ↓</option>
+                    <option value={'sqft:ASC'}>SQFT ↑</option>
+
+                    <option value={'beds:DESC'}>Beds ↓</option>
+                    <option value={'beds:ASC'}>Beds ↑</option>
+
+                  </select>
+              </label>
+            </div>
+
           </div>  
           <div className='properties-grid'>  
             {properties.results.map(property =>
