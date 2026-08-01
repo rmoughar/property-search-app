@@ -38,7 +38,7 @@ function PropertyFilters( {filters, onSearch} ){
         placeholder="Min Price"
         value={tempFilters.minPrice === ""
           ? ""
-          : Number(filters.minPrice).toLocaleString()
+          : Number(tempFilters.minPrice).toLocaleString()
         }
         onChange={e => setTempFilters((prev) => ({...prev, minPrice: formatPrice(e.target.value)}))}
         />
@@ -48,7 +48,7 @@ function PropertyFilters( {filters, onSearch} ){
         placeholder="Max Price"
         value={tempFilters.maxPrice === ""
           ? ""
-          : Number(filters.maxPrice).toLocaleString()
+          : Number(tempFilters.maxPrice).toLocaleString()
         }
         onChange={e => setTempFilters((prev) => ({...prev, maxPrice: formatPrice(e.target.value)}))}
         />
@@ -72,7 +72,7 @@ function PropertyFilters( {filters, onSearch} ){
           <label htmlFor="baths">Baths: </label>
           <select
           id="baths"
-          value={filters.baths}
+          value={tempFilters.baths}
           onChange={e => setTempFilters((prev) => ({...prev, baths:e.target.value,}))}>
             <option value={''}>Any</option>
             <option value={'1'}>1</option>

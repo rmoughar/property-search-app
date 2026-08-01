@@ -19,7 +19,7 @@ describe("propertyFilter", () => {
     test("returns property data when the request succeeds", () => {
         const filters = {city: '', zipcode: '', minPrice: '', maxPrice: '', beds: '', baths: ''};
 
-        render(<PropertyFilters filters={filters} setFilters={mockSetFilter} onSearch={mockSearch}/>);
+        render(<PropertyFilters filters={filters} onSearch={mockSearch}/>);
 
         expect(screen.getByPlaceholderText("City")).toBeInTheDocument();
         expect(screen.getByPlaceholderText("ZIP Code")).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe("propertyFilter", () => {
         expect(screen.getByLabelText("Baths:")).toBeInTheDocument();
     });
 
-    test("typing updates filters object", () => {
+    test("search updates filters object", () => {
         const filters = {city: '', 
             zipcode: '', 
             minPrice: '', 
@@ -38,18 +38,27 @@ describe("propertyFilter", () => {
             baths: ''};
 
         render(<PropertyFilters filters={filters} 
-            setFilters={mockSetFilter} 
             onSearch={mockSearch}/>);
 
         const input = screen.getByPlaceholderText('City');
         fireEvent.change(input, {
             target: {value: 'Escondido'},
         });
+        fireEvent.click(screen.getByText("Search"));
 
-        expect(mockSetFilter).toHaveBeenCalledTimes(1);
+        expect(mockSearch).toHaveBeenCalledTimes(1);
+        expect(input.value).toBe('Escondido');
+        expect(mockSearch).toHaveBeenCalledWith({
+            city: 'Escondido',
+            zipcode: '',
+            minPrice: '',
+            maxPrice: '',
+            beds: '',
+            baths: ''
+        })
     });
 
-    test("typing updates filters object", () => {
+    test("clear button calls search with empty filters", () => {
         const filters = {city: 'Escondido', 
             zipcode: '92025', 
             minPrice: '100000', 
@@ -58,12 +67,11 @@ describe("propertyFilter", () => {
             baths: '2'};
 
         render(<PropertyFilters filters={filters} 
-            setFilters={mockSetFilter} 
             onSearch={mockSearch}/>);
 
         fireEvent.click(screen.getByText("Clear"))
 
-        expect(mockSetFilter).toHaveBeenCalledWith({
+        expect(mockSearch).toHaveBeenCalledWith({
             city: '',
             zipcode: '',
             minPrice: '',

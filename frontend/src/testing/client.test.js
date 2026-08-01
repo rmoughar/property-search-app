@@ -61,7 +61,7 @@ describe("fetchproperties", () => {
         });
 
         await fetchFilteredProperties({city: "Ann Arbor", beds: "3",  zipcode: ""});
-        expect(mockFetch).toHaveBeenCalledWith('/api/properties?city=Ann Arbor&beds=3&');
+        expect(mockFetch).toHaveBeenCalledWith('/api/properties?city=Ann Arbor&beds=3&', {signal: undefined});
         expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 });
