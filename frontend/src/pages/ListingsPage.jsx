@@ -5,6 +5,7 @@ import PropertyFilters from "../components/PropertyFilters";
 import { useRef } from "react";
 import './ListingsPage.css'
 import Pagination from "../components/Pagination";
+import {Link} from "react-router"
 
 function ListingsPage() {
   const [properties, setProperties] = useState({results: []});
@@ -137,13 +138,19 @@ function ListingsPage() {
           </div>  
           <div className='properties-grid'>  
             {properties.results.map(property =>
-              <PropertyCard key={property.id} property={property}></PropertyCard>
+                <Link key={property.id} to={`/property/${property.L_ListingID}`}>
+                    <PropertyCard property={property}></PropertyCard>
+                </Link>
             )}
           </div>
         </div>
       )}
 
-      <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
+
+      {totalPages > 1 && (
+        <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
+      )}
+      
     </div>
   )
 }

@@ -30,7 +30,7 @@ function PropertyCard( {property} ){
       )}
 
       <div className="property-info">
-        <div className="price">${property.L_SystemPrice.toLocaleString()}</div>
+        <div className="price">${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>
         <div className="details">
           <span><b>{property.L_Keyword2}</b> Bed</span>
           <span> | </span>
