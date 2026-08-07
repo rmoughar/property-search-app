@@ -1,11 +1,30 @@
 import { Link, useParams } from "react-router";
 import { fetchPropertyById } from "../api/client";
 import { useEffect, useState } from "react";
-import PropertyCard from "../components/PropertyCard";
+import './PropertyDetailPage.css'
+import PropertyImageCarousel from "../components/PropertyImageCarousel";
+import PropertyImageGallery from "../components/PropertyImageGallery";
 
 function PropertyDetailPage() {
+    const [imageError, setImageError] = useState(false);
     const [property, setProperty] = useState({Property: []});
     const params = useParams();
+
+    let photos;
+
+    try{
+        if(property.L_Photos === ''){
+        photos = []
+        }else{
+        photos = JSON.parse(property.L_Photos)
+        }
+    }catch(error){
+        console.error("Invalid JSON:", error);
+        photos = []
+    }
+
+    const image = photos[0];
+    
 
     useEffect(() => {
         async function loadProperty(){
@@ -21,10 +40,99 @@ function PropertyDetailPage() {
     console.log('property:', property);
     
 
+    function validateDetail(detail){
+        return detail != null ? detail : "N/A"
+    };
+
+    const propertyDetails = [
+        {label: "Property Type", value: property.L_Type_},
+        {label: "Status", value: property.L_Status},
+        {label: "Architectural", value: property.ArchitecturalStyle },
+        {label: "Stories", value: property.StoriesTotal},
+        {label: "Lot Size", value: property.LotSizeAcres},
+        {label: "Flooring", value: property.Flooring},
+        {label: "Garage", value: property.GarageYN},
+        {label: "Parking Spaces", value: property.OpenParkingSpaces},
+        {label: "Fireplace", value: property.FireplaceYN},
+        {label: "Pool", value: property.PoolFeatures},
+        {label: "Spa", value: property.SpaFeatures},
+        {label: "View", value: property.View},
+        {label: "Interior Features", value: property.InteriorFeatures},
+        {label: "Appliances", value: property.Appliances},
+        {label: "Heating", value: property.Heating},
+        {label: "Cooling", value: property.Cooling},
+    ]
+
+    const listingDetails = [
+        {label: "MLS ID", value: property.L_ListingID},
+        {label: "Listed On", value: property.L_ListingContractDate},
+        {label: "Last Price Change", value: property.PriceChangeTimestamp},
+        {label: "Listing Agent", value: property.ListAgentFullName},
+        {label: "Brokerage", value: property.L01_OrganizationName},
+    ]
+
     return(
         <div>
-            <PropertyCard property={property}></PropertyCard>
-            <Link to={'/'}>Back</Link>
+
+            {image && !imageError ? (
+                <img
+                src={image} 
+                alt={property.L_Address}
+                onError={() => setImageError(true)}/>
+            ) : (
+                <div className="noImage">No Image Available</div>
+            )}
+
+            <div>
+                <div>${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>
+                
+                <div>
+                    <div>{property.L_Address}</div>
+                    <span><b>{validateDetail(property.L_Keyword2)}</b> Bed</span>
+                    <span> | </span>
+                    <span><b>{validateDetail(property.LM_Dec_3)}</b> Ba</span>
+                    <span> | </span>
+                    <span><b>{property.LM_Int2_3 != null ? property.LM_Int2_3.toLocaleString() : "N/A"}</b> sqft</span>
+                    <span> | </span>
+                    <span><b>{validateDetail(property.YearBuilt)}</b> year built</span>
+                </div>
+
+                <div>
+                    <h2>Description:</h2>
+                    <p>{property.L_Remarks}</p>
+                </div>
+
+                <div>
+                    <h2>Property Details:</h2>
+                    <div className="property-detail-grid">
+                        {propertyDetails.map(detail =>
+                            <div className="property-detail-row" key={detail.label}>
+                                <b>{validateDetail(detail.label)}:</b>
+                                <span>{validateDetail(detail.value)}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div>
+                    <h2>Listing Details:</h2>
+                    <div className="listing-detail-grid">
+                        {listingDetails.map(detail =>
+                            <div className="listing-detail-row" key={detail.label}>
+                                <b>{validateDetail(detail.label)}:</b>
+                                <span>{validateDetail(detail.value)}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <div className="link-box">
+                <Link className='link' to={'/'}>Back</Link>
+            </div>
+
+            <h2>Gallery:</h2>
+            <PropertyImageGallery images={photos}></PropertyImageGallery>
         </div>
     )
 }

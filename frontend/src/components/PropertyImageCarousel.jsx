@@ -1,0 +1,51 @@
+import { useState } from "react";
+import './PropertyImageCarousel.css'
+
+function PropertyImageCarousel({images}) {
+    const [currentImage, setCurrentImage] = useState(0);
+    const [imageError, setImageError] = useState(null)
+    const image = images[currentImage]
+
+
+    return(
+        <div className="carousel">
+
+            <button
+                className="left-arrow"
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setImageError(false);
+                    currentImage === 0 ? setCurrentImage(images.length - 1) : setCurrentImage(prev => prev - 1);
+                }}> {'<'}
+            </button>
+
+            {image && !imageError ? (
+                <img
+                    className="current-image"
+                    src={image} 
+                    onError={() => setImageError(true)}/>
+            ) : (
+                <div className="noImage">No Image Available</div>
+            )}
+
+            <button 
+                className="right-arrow"
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setImageError(false);
+                    currentImage === images.length - 1 ? setCurrentImage(0) : setCurrentImage(prev => prev + 1);
+                }}>{'>'}
+            </button>
+
+            <div
+            className="counter">
+                {currentImage + 1} / {images.length}
+            </div>
+
+        </div>
+    )
+}
+
+export default PropertyImageCarousel;

@@ -1,8 +1,7 @@
-import { useState } from "react";
 import './PropertyCard.css'
+import PropertyImageCarousel from "./PropertyImageCarousel";
 
 function PropertyCard( {property} ){
-  const [imageError, setImageError] = useState(false);
   let photos;
 
   try{
@@ -16,18 +15,11 @@ function PropertyCard( {property} ){
     photos = []
   }
 
-  const image = photos[0];
 
   return(
     <li className='property-card'>
 
-      {image && !imageError ? (
-        <img src={image} 
-        alt={property.L_Address}
-        onError={() => setImageError(true)}/>
-      ) : (
-        <div className="noImage">No Image Available</div>
-      )}
+      <PropertyImageCarousel images={photos}></PropertyImageCarousel>
 
       <div className="property-info">
         <div className="price">${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>

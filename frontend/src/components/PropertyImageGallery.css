@@ -1,0 +1,32 @@
+.gallery-controls{
+    display: flex;
+    gap: 5px;
+}
+
+.gallery{
+}
+
+.thumbnail-strip{
+    display: flex;
+    border: soild 2px black;
+}
+
+.thumbnail-image:hover{
+    cursor: pointer;
+}
+
+.lightbox{
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center; 
+    align-items: center;     
+
+    background: rgba(0,0,0,0.8);
+}
+
+.lightbox-image {
+    max-width: 80vw;
+    max-height: 80vh;
+}

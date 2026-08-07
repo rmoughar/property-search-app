@@ -1,0 +1,25 @@
+img {
+    height: 50%;
+    width: 50%;
+}
+
+.link-box{
+    text-align: center;
+}
+
+.link{
+    color: blue;
+}
+
+.property-detail-grid,
+.listing-detail-grid{
+    display: flex;
+    flex-direction: column;
+}
+
+.property-detail-row,
+.listing-detail-row{
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
