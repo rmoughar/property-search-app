@@ -24,6 +24,38 @@ position: relative;
     transform: translateY(-50%);
 }
 
+.left-arrow,
+.right-arrow{
+
+}
+
+.left-arrow:hover,
+.right-arrow:hover{
+
+}
+
+
+.left-arrow,
+.right-arrow{
+    font-size: 1rem;
+    color: rgb(255, 255, 255);
+    border-radius: 50%;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    
+    width: 2rem;
+    height: 2rem;
+}
+
+.left-arrow:hover,
+.right-arrow:hover {
+    background-color: darkgray;
+    cursor: pointer;
+    
+    transition: background .2s;
+}
+
 .counter{
     position: absolute;
     bottom: 10px;

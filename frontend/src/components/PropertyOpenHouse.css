@@ -1,0 +1,55 @@
+.openhouse{
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.openhouse-title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 1.15rem;
+    font-weight: bold;    
+}
+
+.openhouse-title:hover{
+    background-color: lightgray;
+    transition: background 0.2s;
+}
+
+.openhouse-title-date-info{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.openhouse-status-active,
+.openhouse-status-expired{
+    padding: 0.5rem 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+
+    white-space: nowrap;
+}
+
+.openhouse-status-active {
+    color: #166534;
+}
+
+.openhouse-status-expired {
+    color: #6b7280;
+}
+
+.openhouse-remarks {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 0.5rem;
+
+    padding: 1rem;
+
+    border-top: 1px solid lightgray;
+
+    background-color: #fafafa;
+}

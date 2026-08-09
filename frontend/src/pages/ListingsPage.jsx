@@ -75,7 +75,7 @@ function ListingsPage() {
   },[filters, pagination.currentPage, pagination.itemsPerPage, offset, sort])
 
   return(
-    <div>
+    <div className="listings-page">
       <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
      
       

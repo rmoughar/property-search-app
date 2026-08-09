@@ -1,5 +1,22 @@
+import "./PropertyOpenHouse.css"
+
 function PropertyOpenHouse({openhouses}){
-    
+    function formatDate(date){
+        return new Date(date).toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+        })
+    }
+
+    function formatTime(time){
+        return new Date(`2026-01-01T${time}`).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit"
+        })
+    }
+
     function getRemarks(openhouse){
         let remarks;
 
@@ -18,25 +35,46 @@ function PropertyOpenHouse({openhouses}){
         return remarks;
     }
     
+    function getStatus(openhouse){
+        const endTime = new Date(
+            `${openhouse.OH_EndDate}T${openhouse.OH_EndTime}`
+        );
+
+        return endTime >= new Date() ? "Active" : "Expired";
+    }
 
     
     return(
         <div>
 
-            {openhouses.map(openhouse => (
-                <div>
-                    <div>date: {openhouse.OpenHouseDate}</div>
+            {openhouses.map((openhouse,index) => {
+                const remarks = getRemarks(openhouse);
+                const status = getStatus(openhouse);
 
-                    <div>time: {openhouse.OH_StartTime} - {openhouse.OH_EndTime}</div>
+                return <details 
+                className="openhouse"
+                key={index}>
+                    <summary className="openhouse-title">
+                        <div className="openhouse-title-date-info">
+                            <span>{formatDate(openhouse.OpenHouseDate)},</span>
 
-                    {getRemarks(openhouse) != '' ? (
-                        <div>remarks: {getRemarks(openhouse)}</div>
-                    ) : (
-                        <></>
-                    )}
+                            <span>
+                                {formatTime(openhouse.OH_StartTime)} - {formatTime(openhouse.OH_EndTime)}
+                            </span>
+                        </div>
 
-                </div>
-            ))}
+                        <span className={`openhouse-status-${status.toLowerCase()}`}>
+                            {status}
+                        </span>
+                    </summary>
+
+                    <div className="openhouse-remarks">
+                        <b>Remarks:</b>
+                        <span>{remarks || "N/A"}</span>
+                    </div>
+
+                </details>
+            })}
 
             
         </div>

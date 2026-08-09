@@ -7,7 +7,6 @@ import PropertyMap from "../components/PropertyMap";
 import PropertyOpenHouse from "../components/PropertyOpenHouse";
 
 function PropertyDetailPage() {
-    const [imageError, setImageError] = useState(false);
     const [property, setProperty] = useState({Property: []});
     const params = useParams();
     const [openhouses, setOpenHouses] = useState([]);
@@ -24,9 +23,6 @@ function PropertyDetailPage() {
         console.error("Invalid JSON:", error);
         photos = []
     }
-
-    const image = photos[0];
-    
 
     useEffect(() => {
         async function loadData(){
@@ -75,38 +71,44 @@ function PropertyDetailPage() {
     ]
 
     return(
-        <div>
+        <div className="detail-page">
 
-            {image && !imageError ? (
-                <img
-                src={image} 
-                alt={property.L_Address}
-                onError={() => setImageError(true)}/>
-            ) : (
-                <div className="noImage">No Image Available</div>
-            )}
+            <div className="link-box">
+                <Link className='link' to={'/'}>Back to Listings</Link>
+            </div>
 
-            <div>
-                <div>${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>
+            <div className="hero">
+
+                <PropertyImageGallery images={photos}></PropertyImageGallery>
                 
-                <div>
-                    <div>{property.L_Address}</div>
-                    <span><b>{validateDetail(property.L_Keyword2)}</b> Bed</span>
-                    <span> | </span>
-                    <span><b>{validateDetail(property.LM_Dec_3)}</b> Ba</span>
-                    <span> | </span>
-                    <span><b>{property.LM_Int2_3 != null ? property.LM_Int2_3.toLocaleString() : "N/A"}</b> sqft</span>
-                    <span> | </span>
-                    <span><b>{validateDetail(property.YearBuilt)}</b> year built</span>
+                <div className="hero-details">
+                    <div className="hero-price">${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>
+                    
+                    <div className="hero-location-details">
+                        <div className="hero-address">{property.L_Address}</div>
+                        <div className="hero-location">{property.L_City}, {property.L_State}, {property.L_Zip}</div>
+                    </div>
+                    
+                    <div className="hero-house-details">
+                        <div><b>{validateDetail(property.L_Keyword2)}</b> Bed</div>
+                        <div><b>{validateDetail(property.LM_Dec_3)}</b> Ba</div>
+                        <div><b>{property.LM_Int2_3 != null ? property.LM_Int2_3.toLocaleString() : "N/A"}</b> sqft</div>
+                        <div><b>{validateDetail(property.YearBuilt)}</b> year built</div>
+                    </div>
+
+                    
                 </div>
 
-                <div>
-                    <h2>Description:</h2>
-                    <p>{property.L_Remarks}</p>
-                </div>
+            </div>
 
-                <div>
-                    <h2>Property Details:</h2>
+            <div className="description-box">
+                <div className="description-title"><b>Description</b></div>
+                <div className="description">{property.L_Remarks}</div>
+            </div>
+
+            <div className="details-dropdowns">
+                <details>
+                    <summary>Property Details</summary>
                     <div className="property-detail-grid">
                         {propertyDetails.map(detail =>
                             <div className="property-detail-row" key={detail.label}>
@@ -115,10 +117,10 @@ function PropertyDetailPage() {
                             </div>
                         )}
                     </div>
-                </div>
+                </details>
 
-                <div>
-                    <h2>Listing Details:</h2>
+                <details>
+                    <summary>Listing Details</summary>
                     <div className="listing-detail-grid">
                         {listingDetails.map(detail =>
                             <div className="listing-detail-row" key={detail.label}>
@@ -127,21 +129,15 @@ function PropertyDetailPage() {
                             </div>
                         )}
                     </div>
-                </div>
+                </details>
             </div>
-
-            <div className="link-box">
-                <Link className='link' to={'/'}>Back</Link>
-            </div>
-
-            <h2>Gallery:</h2>
-            <PropertyImageGallery images={photos}></PropertyImageGallery>
 
             <h2>Map:</h2>
             <PropertyMap LAT={property.LMD_MP_Latitude} LNG={property.LMD_MP_Longitude}></PropertyMap>
 
             <h2>Openhouses:</h2>
             <PropertyOpenHouse openhouses={openhouses}></PropertyOpenHouse>
+
         </div>
     )
 }
