@@ -30,7 +30,7 @@ function ListingsPage() {
   
   const [sort, setSort] = useState('');
 
-  const controller = useRef(null);
+  
 
   function changeCurrentPage(page){
     setPagination(prev => ({...prev, currentPage:page}))
@@ -42,6 +42,7 @@ function ListingsPage() {
     changeCurrentPage(1);
   } 
 
+  const controller = useRef(null);
   useEffect(() => {
 
     if(controller.current != null){

@@ -9,7 +9,7 @@ export default defineConfig({
     setupFiles: '/src/testing/vitestSetup.js'
   },
   server: {
-    port:4000,
+    port:4001,
     proxy: {
       '/api' : {
         target: 'http://localhost:4000',

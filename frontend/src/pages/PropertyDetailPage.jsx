@@ -1,14 +1,16 @@
 import { Link, useParams } from "react-router";
-import { fetchPropertyById } from "../api/client";
+import { fetchOpenHouseById, fetchPropertyById } from "../api/client";
 import { useEffect, useState } from "react";
 import './PropertyDetailPage.css'
-import PropertyImageCarousel from "../components/PropertyImageCarousel";
 import PropertyImageGallery from "../components/PropertyImageGallery";
+import PropertyMap from "../components/PropertyMap";
+import PropertyOpenHouse from "../components/PropertyOpenHouse";
 
 function PropertyDetailPage() {
     const [imageError, setImageError] = useState(false);
     const [property, setProperty] = useState({Property: []});
     const params = useParams();
+    const [openhouses, setOpenHouses] = useState([]);
 
     let photos;
 
@@ -27,18 +29,19 @@ function PropertyDetailPage() {
     
 
     useEffect(() => {
-        async function loadProperty(){
+        async function loadData(){
             try{
-                const data = await fetchPropertyById(params.id);
-                setProperty(data.Property);
+                const propertyData = await fetchPropertyById(params.id);
+                setProperty(propertyData.Property);
+
+                const openHouseData = await fetchOpenHouseById(propertyData.Property.L_ListingID);
+                setOpenHouses(openHouseData.Openhouses);
             } catch(error){
                 console.error(error.message);
             }
         };
-        loadProperty();
-    }, [params.id]);
-    console.log('property:', property);
-    
+        loadData();
+    }, [params.id]);    
 
     function validateDetail(detail){
         return detail != null ? detail : "N/A"
@@ -133,6 +136,12 @@ function PropertyDetailPage() {
 
             <h2>Gallery:</h2>
             <PropertyImageGallery images={photos}></PropertyImageGallery>
+
+            <h2>Map:</h2>
+            <PropertyMap LAT={property.LMD_MP_Latitude} LNG={property.LMD_MP_Longitude}></PropertyMap>
+
+            <h2>Openhouses:</h2>
+            <PropertyOpenHouse openhouses={openhouses}></PropertyOpenHouse>
         </div>
     )
 }

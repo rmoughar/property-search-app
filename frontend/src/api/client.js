@@ -35,4 +35,20 @@ export async function fetchPropertyById(id) {
   return result;
 }
 
+export async function fetchOpenHouseById(id) {
+  let url = `/api/properties/${id}/openhouses`
+
+  console.log(url);
+  
+  const response = await fetch(url);
+  
+  if(!response.ok){
+        throw new Error('Failed to fetch property');
+    }
+  
+  const result = await response.json();
+  return result;
+}
+
 //http://localhost:4000/api/properties/1149391864/
+//http://localhost:4000/api/properties/1149391864/openhouses
