@@ -11,6 +11,7 @@
 
 .link{
     font-size: 1.25rem;
+    font-weight: bold;
     color: rgba(0,0,0,.65);
     padding: .5rem;
 }
@@ -122,6 +123,12 @@ summary:hover{
     transition: background .2s;
 }
 
+.no-open-house{
+    
+    font-size: 1.15rem;
+    font-weight: bold;
+}
+
 .property-detail-grid,
 .listing-detail-grid{
     display: grid;
@@ -136,8 +143,8 @@ summary:hover{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem 1rem;
+    margin: 5px;
+    padding: 0.75rem 0.75rem;
 }
 
 .property-detail-row:nth-child(4n + 1),
@@ -148,4 +155,17 @@ summary:hover{
     border-radius: 12px;
 }
 
+.error-page{
+    display: flex;
+    flex-direction: column;
 
+    align-items: center;
+}
+
+.error-page p{
+    font-size: 1.5rem;
+}
+.error-message{
+    font-size: 2rem;
+    font-weight: bold;
+}

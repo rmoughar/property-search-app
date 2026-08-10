@@ -46,7 +46,7 @@ function PropertyOpenHouse({openhouses}){
     
     return(
         <div>
-
+            
             {openhouses.map((openhouse,index) => {
                 const remarks = getRemarks(openhouse);
                 const status = getStatus(openhouse);

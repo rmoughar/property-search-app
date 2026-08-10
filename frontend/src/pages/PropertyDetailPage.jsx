@@ -8,6 +8,7 @@ import PropertyOpenHouse from "../components/PropertyOpenHouse";
 
 function PropertyDetailPage() {
     const [property, setProperty] = useState({Property: []});
+    const [invalidProperty, setInvalidProperty] = useState(false);
     const params = useParams();
     const [openhouses, setOpenHouses] = useState([]);
 
@@ -33,6 +34,7 @@ function PropertyDetailPage() {
                 const openHouseData = await fetchOpenHouseById(propertyData.Property.L_ListingID);
                 setOpenHouses(openHouseData.Openhouses);
             } catch(error){
+                setInvalidProperty(true);
                 console.error(error.message);
             }
         };
@@ -70,6 +72,19 @@ function PropertyDetailPage() {
         {label: "Brokerage", value: property.L01_OrganizationName},
     ]
 
+    if(invalidProperty){
+        return (
+            <div className="error-page">
+                <div className="error-message">Property Not Found</div>
+                
+                <p>Sorry, we couldn't find the property you're looking for</p>
+                
+                <div className="link-box">
+                    <Link className='link' to={'/'}>Back to Listings</Link>
+                </div>
+            </div>
+        )
+    }
     return(
         <div className="detail-page">
 
@@ -136,7 +151,11 @@ function PropertyDetailPage() {
             <PropertyMap LAT={property.LMD_MP_Latitude} LNG={property.LMD_MP_Longitude}></PropertyMap>
 
             <h2>Openhouses:</h2>
+            {openhouses.length === 0 ? (
+                <div className="no-open-house">No open houses scheduled</div>
+            ) : (
             <PropertyOpenHouse openhouses={openhouses}></PropertyOpenHouse>
+            )}
 
         </div>
     )
