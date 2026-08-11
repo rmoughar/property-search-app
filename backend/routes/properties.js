@@ -209,9 +209,6 @@ propertiesRouter.get('/:id', async (req,res) => {
 
         handleNum(Number(id), 'id');
 
-        /*console.log("query:", sqlQuery);
-        console.log("id:", Number(id));*/
-
         //Uses parameterized query to defend against SQLi
         const [results] = await pool.query(
             sqlQuery,id

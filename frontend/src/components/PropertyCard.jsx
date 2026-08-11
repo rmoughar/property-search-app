@@ -1,7 +1,12 @@
+import { useContext } from 'react';
 import './PropertyCard.css'
 import PropertyImageCarousel from "./PropertyImageCarousel";
+import { FavoritesContext } from '../context/FavoritesContext';
 
 function PropertyCard( {property} ){
+    const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
+
+
   let photos;
 
   try{
@@ -20,6 +25,13 @@ function PropertyCard( {property} ){
     <li className='property-card'>
 
       <PropertyImageCarousel images={photos}></PropertyImageCarousel>
+
+      <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFavorite(property.L_ListingID);
+      }}>{isFavorite(property.L_ListingID) ? "❤️" : "♡"}</button>
 
       <div className="property-info">
         <div className="price">${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>

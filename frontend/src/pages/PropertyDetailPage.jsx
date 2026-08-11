@@ -1,16 +1,18 @@
 import { Link, useParams } from "react-router";
 import { fetchOpenHouseById, fetchPropertyById } from "../api/client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import './PropertyDetailPage.css'
 import PropertyImageGallery from "../components/PropertyImageGallery";
 import PropertyMap from "../components/PropertyMap";
 import PropertyOpenHouse from "../components/PropertyOpenHouse";
+import { FavoritesContext } from "../context/FavoritesContext";
 
 function PropertyDetailPage() {
     const [property, setProperty] = useState({Property: []});
     const [invalidProperty, setInvalidProperty] = useState(false);
     const params = useParams();
     const [openhouses, setOpenHouses] = useState([]);
+    const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
 
     let photos;
 
@@ -109,6 +111,14 @@ function PropertyDetailPage() {
                         <div><b>{validateDetail(property.LM_Dec_3)}</b> Ba</div>
                         <div><b>{property.LM_Int2_3 != null ? property.LM_Int2_3.toLocaleString() : "N/A"}</b> sqft</div>
                         <div><b>{validateDetail(property.YearBuilt)}</b> year built</div>
+                        
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleFavorite(property.L_ListingID);
+                                }}>{isFavorite(property.L_ListingID) ? "❤️" : "♡"}
+                        </button>
                     </div>
 
                     
