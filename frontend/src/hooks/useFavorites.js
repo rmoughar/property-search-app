@@ -6,7 +6,7 @@ export const useFavorites = () => {
     function toggleFavorite(id){
 
         if(isFavorite(id)){
-            setfavorites(favorites.filter(favorite => favorite !== id))
+            setfavorites(prev => prev.filter(favorite => favorite !== id))
         } else{
             setfavorites(prev => [...prev, id])
         }
@@ -14,7 +14,7 @@ export const useFavorites = () => {
     }
 
     function isFavorite(id){
-        return favorites.includes(id) ? true : false;
+        return favorites.includes(id);
     }
 
     return [favorites, isFavorite, toggleFavorite];

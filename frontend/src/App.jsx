@@ -3,6 +3,7 @@ import './App.css'
 import ListingsPage from './pages/ListingsPage'
 import PropertyDetailPage from './pages/PropertyDetailPage'
 import { FavoritesProvider } from './context/provider/FavoritesProvider'
+import FavoritesPage from './pages/FavoritesPage'
 
 function App() {
 
@@ -10,14 +11,17 @@ function App() {
     <>
   
       <header className='app-header'>
-        {/* <h1>Property Search</h1> */}
-        <Link className='title-link' to={'/'}><h1>Property Search</h1></Link>
+        <div className='header-box'>
+            <Link className='title-link' to={'/'}><h1>Property Search</h1></Link>
+            <Link className='favorites-link' to={'/favorites'}><span>Favorites</span></Link>
+        </div>
       </header>
 
       <FavoritesProvider>
         <Routes>
             <Route path='/' element={<ListingsPage />} />
             <Route path='/property/:id' element={<PropertyDetailPage />} />
+            <Route path='/favorites' element={<FavoritesPage />}/>
         </Routes>
       </FavoritesProvider>
       
