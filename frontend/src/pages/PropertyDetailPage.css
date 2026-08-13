@@ -31,6 +31,31 @@
     align-items: start;
 }
 
+.gallery-box{
+    position: relative;
+}
+
+.detail-favorite-button{
+    position: absolute;
+    right: 5%;
+    top: 5%;
+
+    font-size: 2.5rem;
+    border: none;
+    background: none;
+    color: white;
+    transition: color .2s;
+}
+
+.detail-favorite-button:hover{
+    cursor: pointer;
+}
+
+.detail-favorited{
+    color: red;
+    transition: color .2s;
+}
+
 .hero-details{
     display: flex;
     flex-direction: column;
@@ -76,10 +101,6 @@
     padding: 1rem 0.75rem;
     background-color: rgba(0,0,0,.15);
     border-radius: 10px;
-}
-
-.hero-house-details div:last-child{
-    border-right: none;
 }
 
 .hero-house-details b {

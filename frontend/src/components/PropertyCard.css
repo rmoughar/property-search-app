@@ -52,3 +52,28 @@ a {
     text-decoration: none;
     color: inherit;
 }
+
+.carousel-box{
+    position: relative;
+}
+
+.card-favorite-button{
+    position: absolute;
+    right: 3%;
+    top: 3%;
+
+    font-size: 2rem;
+    border: none;
+    background: none;
+    color: white;
+    transition: color .2s;
+}
+
+.card-favorite-button:hover{
+    cursor: pointer;
+}
+
+.card-favorited{
+    color: red;
+    transition: color .2s;
+}

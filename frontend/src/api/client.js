@@ -9,7 +9,8 @@ export async function fetchFilteredProperties(filters, signal){
   const response = await fetch(url, {signal});
   
   if(!response.ok){
-        throw new Error('Failed to fetch properties');
+        const message = await response.text();
+        throw new Error(message);
     }
   
   const result = await response.json();
@@ -24,7 +25,8 @@ export async function fetchPropertyById(id) {
   const response = await fetch(url);
   
   if(!response.ok){
-        throw new Error('Failed to fetch property');
+        const message = await response.text();
+        throw new Error(message);
     }
   
   const result = await response.json();
@@ -37,23 +39,28 @@ export async function fetchOpenHouseById(id) {
   const response = await fetch(url);
   
   if(!response.ok){
-        throw new Error('Failed to fetch property');
+        const message = await response.text();
+        throw new Error(message);
     }
   
   const result = await response.json();
   return result;
 }
 
-export async function fetchMultipleProperties(ids) {
+export async function fetchMultipleProperties(ids, filters, signal) {
   const queryIDS = ids.join(',')
-  let url = `/api/properties/ids/${queryIDS}`
+  let url = `/api/properties/ids/${queryIDS}?`;
 
-  console.log(url);
+  Object.entries(filters).forEach(([key, value]) => {
+    if(value === '') return;
+    url = url + key + '=' + value + '&';
+  })
   
-  const response = await fetch(url);
+  const response = await fetch(url, {signal});
   
   if(!response.ok){
-        throw new Error('Failed to fetch property');
+        const message = await response.text();
+        throw new Error(message);
     }
   
   const result = await response.json();

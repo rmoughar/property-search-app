@@ -1,40 +1,118 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FavoritesContext } from "../context/FavoritesContext";
 import { fetchMultipleProperties } from "../api/client";
-import { Link } from "react-router";
-import PropertyCard from "../components/PropertyCard";
+import PropertyGrid from "../components/PropertyGrid";
+import usePagination from "../hooks/usePagination";
+import PropertyFilters from "../components/PropertyFilters";
+import PropertyListControls from "../components/PropertyListControls";
+import Pagination from "../components/Pagination";
 
 
 function FavoritesPage() {
     const {favorites} = useContext(FavoritesContext);
-    const [properties, setProperties] = useState([]);
+    const [favoriteProperties, setFavoriteProperties] = useState([]);
 
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const [filters, setFilters] = useState({
+        city: '', 
+        zipcode: '', 
+        minPrice: '', 
+        maxPrice: '', 
+        beds: '', 
+        baths: '',
+        limit: '20',
+        offset: '0'
+    });
+
+    function handleSearch(tempFilters){
+        setFilters(tempFilters);
+        setSort('');
+        changeCurrentPage(1);
+    } 
+
+    const [sort, setSort] = useState('');
+
+    const {
+        pagination,
+        totalPages,
+        offset,
+        changeCurrentPage,
+        changeItemsPerPage
+      } = usePagination(favorites.length);
+
+    const controller = useRef(null);
     useEffect(() => {
+
+        if(controller.current != null){
+        controller.current.abort();
+        }
+
+        controller.current = new AbortController();
             async function loadProperties(){
                 if(favorites.length === 0){
-                    setProperties([]);
+                    setFavoriteProperties([]);
+                    setLoading(false);
                     return;
                 }
                 try{
-                    const propertyData = await fetchMultipleProperties(favorites);
-                    setProperties(propertyData.Properties);
-    
+                    setLoading(true);
+
+                    const params = {...filters, offset:offset, limit: pagination.itemsPerPage, sort:sort};
+                    const slicedFavorites = favorites.slice(offset, offset+pagination.itemsPerPage);
+
+                    if(slicedFavorites.length === 0){
+                        changeCurrentPage(pagination.currentPage-1)
+                    }
+
+                    const propertyData = await fetchMultipleProperties(slicedFavorites, params, controller.current.signal);
+                    setFavoriteProperties(propertyData.Properties);
+                    
+                    setError(null);
+                    setLoading(false);
                 } catch(error){
+                    if(error.name === "AbortError") return;
+
                     console.error(error.message);
-                } 
+                    setError(error);
+                    setLoading(false);
+                }
             };
             loadProperties();
-        }, [favorites]);    
+        }, [favorites, offset, pagination.itemsPerPage, sort, filters]);    
 
     return(
-        <div>
-            <div className='properties-grid'>  
-                {properties.map(property =>
-                    <Link key={property.id} to={`/property/${property.L_ListingID}`}>
-                        <PropertyCard property={property}></PropertyCard>
-                    </Link>
-                )}
-          </div>
+        <div className="favorites-page">
+            <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
+
+            {loading ? (
+                <div className="info-message">loading properties...</div>
+            ) : error ? (
+                <>
+                    {console.log('error:', error)}
+                    <div className="info-message">{error.message}</div>
+                </>
+            ) : (
+                <div>
+                    {console.log('totalpages:', totalPages)}
+                    <PropertyListControls
+                        offset={offset}
+                        itemsPerPage={pagination.itemsPerPage}
+                        total={favorites.length}
+                        changeCurrentPage={changeCurrentPage}
+                        changeItemsPerPage={changeItemsPerPage}
+                        sort={sort}
+                        setSort={setSort}>
+                    </PropertyListControls>
+                    <PropertyGrid properties={favoriteProperties}></PropertyGrid>
+                </div>
+            )}
+
+            {totalPages > 1 && (
+                <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
+            )}
+          
         </div>
     )
 }

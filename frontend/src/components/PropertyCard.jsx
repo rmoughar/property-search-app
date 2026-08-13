@@ -24,14 +24,17 @@ function PropertyCard( {property} ){
   return(
     <li className='property-card'>
 
-      <PropertyImageCarousel images={photos}></PropertyImageCarousel>
+      <div className='carousel-box'>
+        <PropertyImageCarousel images={photos}></PropertyImageCarousel>
 
-      <button
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleFavorite(property.L_ListingID);
-      }}>{isFavorite(property.L_ListingID) ? "❤️" : "♡"}</button>
+        <button
+        className={`card-favorite-button ${isFavorite(property.L_ListingID) ? "card-favorited" : ""}`}
+        onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleFavorite(property.L_ListingID);
+        }}>❤︎⁠</button>
+      </div>
 
       <div className="property-info">
         <div className="price">${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>

@@ -96,7 +96,19 @@ function PropertyDetailPage() {
 
             <div className="hero">
 
-                <PropertyImageGallery images={photos}></PropertyImageGallery>
+                <div className="gallery-box">
+                    <PropertyImageGallery images={photos}></PropertyImageGallery>
+
+                    <button
+                        className={`detail-favorite-button ${isFavorite(property.L_ListingID) ? "detail-favorited" : ""}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleFavorite(property.L_ListingID);
+                        }}>❤︎⁠
+                    </button>
+
+                </div>
                 
                 <div className="hero-details">
                     <div className="hero-price">${property.L_SystemPrice != null ? property.L_SystemPrice.toLocaleString() : "N/A"}</div>
@@ -111,14 +123,7 @@ function PropertyDetailPage() {
                         <div><b>{validateDetail(property.LM_Dec_3)}</b> Ba</div>
                         <div><b>{property.LM_Int2_3 != null ? property.LM_Int2_3.toLocaleString() : "N/A"}</b> sqft</div>
                         <div><b>{validateDetail(property.YearBuilt)}</b> year built</div>
-                        
-                        <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleFavorite(property.L_ListingID);
-                                }}>{isFavorite(property.L_ListingID) ? "❤️" : "♡"}
-                        </button>
+
                     </div>
 
                     

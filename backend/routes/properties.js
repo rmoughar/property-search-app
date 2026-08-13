@@ -7,25 +7,24 @@ const propertiesRouter = express.Router();
 
 let sqlQuery = "SELECT * FROM rets_property"
 
-propertiesRouter.get('/', async (req,res) => {
-    try{
-        let sqlQuery = "SELECT * FROM rets_property";
-        let countQuery = "SELECT COUNT(*) FROM rets_property";
-        const conditions = [];
-        const values = [];
+function handleFiltering(req, res){
+    const conditions = [];
+    const values = [];
+    let limit = 20;
+    let offset = 0;
 
-        //Confirms param validity and adds to query
-        function handleNum(input, condition){
-            if(!(typeof input === 'number')){
-                return res.status(400).send(`${condition} must be a valid number!`)
-            }
-            if(!(Number.isFinite(input))){
-                return res.status(400).send(`${condition} must be a finite number!`)
-            }
-            values.push(input);
-        };
-
-        if(req.query.city){
+    //Confirms param validity and adds to values
+    function handleNum(input, condition){
+        if(!(typeof input === 'number')){
+            return res.status(400).send(`${condition} must be a valid number!`)
+        }
+        if(!(Number.isFinite(input))){
+            return res.status(400).send(`${condition} must be a finite number!`)
+        }
+        values.push(input);
+    };
+    
+    if(req.query.city){
             conditions.push('LOWER(TRIM(L_City)) = LOWER(TRIM(?))')
             values.push(req.query.city)
         }
@@ -66,46 +65,6 @@ propertiesRouter.get('/', async (req,res) => {
             handleNum(Number(req.query.baths), 'baths');
         }
 
-        if (conditions.length !== 0){
-            sqlQuery += ' WHERE ' + conditions.join(' AND ');
-            countQuery += ' WHERE ' + conditions.join(' AND ');
-        }
-
-
-        //console.log("count query:", countQuery);
-        const [countRows] = await pool.query(
-            countQuery,values
-        )
-
-        //add order by for sorting to api call
-        if(req.query.sort){
-            const sortColumns = {
-                date: "ListingContractDate",
-                price: "L_SystemPrice",
-                beds: "L_Keyword2",
-                sqft: "LM_Int2_3"
-            };
-
-            const [field, direction] = req.query.sort.split(":");
-            const column = sortColumns[field];
-
-            const validDirections = ["ASC", "DESC"];
-
-            if(!column || !validDirections.includes(direction)) {
-                return res.status(400).send('Must use acceptable sorting parameters');
-            }
-
-            sqlQuery += ` ORDER BY ${column} ${direction}`;
-            
-        }
-        
-        console.log('query:', sqlQuery);
-
-        //Add limit and offset for pagination
-        sqlQuery += ' LIMIT ? OFFSET ?';
-        let limit = 20;
-        let offset = 0;
-
         if(req.query.limit){
             limit = Number(req.query.limit);
             if(limit <= 0){
@@ -121,8 +80,62 @@ propertiesRouter.get('/', async (req,res) => {
         }
         else values.push(offset); 
 
-        /*console.log("query:", sqlQuery);
-        console.log("values:", values);*/
+        
+
+        return [conditions, values, limit, offset];
+};
+
+function handleSorting(req, res){
+    //add order by for sorting to api call
+    if(req.query.sort){
+        const sortColumns = {
+            date: "ListingContractDate",
+            price: "L_SystemPrice",
+            beds: "L_Keyword2",
+            sqft: "LM_Int2_3"
+        };
+
+        const [field, direction] = req.query.sort.split(":");
+        const column = sortColumns[field];
+
+        const validDirections = ["ASC", "DESC"];
+
+        if(!column || !validDirections.includes(direction)){
+            return res.status(400).send('Must use acceptable sorting parameters');
+        }
+
+        return [column, direction];
+    }
+    else{
+        return ['','']
+    }
+
+    
+}
+
+propertiesRouter.get('/', async (req,res) => {
+    try{
+        let sqlQuery = "SELECT * FROM rets_property";
+        let countQuery = "SELECT COUNT(*) FROM rets_property";
+        
+        const [conditions, values] = handleFiltering(req, res);
+
+        if (conditions.length !== 0){
+            sqlQuery += ' WHERE ' + conditions.join(' AND ');
+            countQuery += ' WHERE ' + conditions.join(' AND ');
+        }
+
+        //console.log("count query:", countQuery);
+        const [countRows] = await pool.query(
+            countQuery,values
+        )
+
+        if(req.query.sort){
+            const [column, direction] = handleSorting(req, res);
+            sqlQuery += ` ORDER BY ${column} ${direction}`;
+        }
+
+        sqlQuery += ' LIMIT ? OFFSET ?';
 
         //Uses parameterized query to defend against SQLi
         const [results] = await pool.query(
@@ -141,7 +154,6 @@ propertiesRouter.get('/', async (req,res) => {
         res.status(500).send('Error')
     }
     
-    
 })
 
 propertiesRouter.get('/:id/openhouses', async (req,res) => {
@@ -150,7 +162,7 @@ propertiesRouter.get('/:id/openhouses', async (req,res) => {
         const validQuery = 'SELECT 1 FROM rets_property WHERE L_ListingID = ?';
         const id = req.params.id;
 
-        //Confirms param validity and adds to query
+        //Confirms param validity
         function handleNum(input, condition){
             if(!(Number.isInteger(input))){
                 return res.status(400).send(`${condition} must be a valid number!`);
@@ -228,45 +240,93 @@ propertiesRouter.get('/:id', async (req,res) => {
     }
 })
 
+// propertiesRouter.get('/ids/:ids', async (req,res) => {
+//     try{
+
+//         const ids = req.params.ids.split(',');
+//         //Confirms param validity
+//         if (ids.some(id => !Number.isFinite(Number(id)))) {
+//             return res.status(400).send("IDs must be valid numbers!");
+//         }
+
+//         const marks = ids.map(() => '?').join(',');
+
+//         let limit = 20;
+//         let offset = 0;
+
+//         if(req.query.offset){
+//             offset = Number(req.query.offset);
+//             handleNum(offset, 'offset');
+//         }
+
+//         if(req.query.limit){
+//             limit = Number(req.query.limit);
+//             if(limit <= 0){
+//                 return res.status(400).send(`Limit must be greater than 0!`);
+//             }
+//             handleNum(limit, 'limit');
+//         }
+
+//         const sqlQuery = ` 
+//             SELECT * 
+//             FROM rets_property 
+//             WHERE L_ListingID IN (${marks})
+//         `;
+
+//         //Uses parameterized query to defend against SQLi
+//         const [results] = await pool.query(
+//             sqlQuery,[...ids,...ids, limit, offset]
+//         )
+
+//         if (results.length === 0){
+//             return res.status(404).send('No properties found!')
+//         }
+        
+//         res.json({
+//             total: ids.length,
+//             limit: limit,
+//             offset: offset,
+//             Properties: results
+//         });
+//     }
+//     catch (err){
+//         console.error(err);
+//         res.status(500).send('Error')
+//     }
+// })
+
 propertiesRouter.get('/ids/:ids', async (req,res) => {
     try{
-
+        //Pull and confirm ids validity
         const ids = req.params.ids.split(',');
-        //Confirms param validity
         if (ids.some(id => !Number.isFinite(Number(id)))) {
             return res.status(400).send("IDs must be valid numbers!");
         }
 
         const marks = ids.map(() => '?').join(',');
 
-        let limit = 20;
-        let offset = 0;
-
-        if(req.query.offset){
-            offset = Number(req.query.offset);
-            handleNum(offset, 'offset');
-        }
-
-        if(req.query.limit){
-            limit = Number(req.query.limit);
-            if(limit <= 0){
-                return res.status(400).send(`Limit must be greater than 0!`);
-            }
-            handleNum(limit, 'limit');
-        }
-
-        const sqlQuery = ` 
+        let sqlQuery = ` 
             SELECT * 
             FROM rets_property 
             WHERE L_ListingID IN (${marks})
-            ORDER BY FIELD(L_ListingID, ${marks})
-            LIMIT ?
-            OFFSET ?
         `;
+        
+        const [conditions, values, limit, offset] = handleFiltering(req, res);
+
+        //construct query
+        if (conditions.length !== 0){
+            sqlQuery += '   AND '
+            sqlQuery += conditions.join(' AND ');
+        }
+
+        if(req.query.sort){
+            const [column, direction] = handleSorting(req, res);
+            sqlQuery += ` ORDER BY ${column} ${direction}`;
+        }
 
         //Uses parameterized query to defend against SQLi
         const [results] = await pool.query(
-            sqlQuery,[...ids,...ids, limit, offset]
+            sqlQuery,[...ids, ...values]
         )
 
         if (results.length === 0){
@@ -279,6 +339,7 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
             offset: offset,
             Properties: results
         });
+
     }
     catch (err){
         console.error(err);
