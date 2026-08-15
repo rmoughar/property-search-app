@@ -1,6 +1,22 @@
 import "./PropertyMap.css";
 
 function PropertyMap({LAT, LNG}){
+    if(!LAT){
+        return (
+            <div className="info-message">
+                Invalid Latitude, Map Cannot Render
+            </div>
+        )
+    }
+
+    if(!LNG){
+        return (
+            <div className="info-message">
+                Invalid Longitude, Map Cannot Render
+            </div>
+        )
+    }
+
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
     const url = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${LAT},${LNG}&zoom=15`
     return(

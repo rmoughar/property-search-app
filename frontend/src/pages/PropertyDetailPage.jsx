@@ -8,36 +8,43 @@ import PropertyOpenHouse from "../components/PropertyOpenHouse";
 import { FavoritesContext } from "../context/FavoritesContext";
 
 function PropertyDetailPage() {
-    const [property, setProperty] = useState({Property: []});
+    const [property, setProperty] = useState(null);
     const [invalidProperty, setInvalidProperty] = useState(false);
     const params = useParams();
     const [openhouses, setOpenHouses] = useState([]);
     const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
+    const [loading, setLoading] = useState(true);
 
-    let photos;
-
-    try{
-        if(property.L_Photos === ''){
-        photos = []
-        }else{
-        photos = JSON.parse(property.L_Photos)
+    function loadPhotos(){
+        try{
+            if(!property.L_Photos){
+                return []
+            }else{
+                return JSON.parse(property.L_Photos)
+            }
+        }catch(error){
+            console.error("Invalid JSON:", error);
+            return []
         }
-    }catch(error){
-        console.error("Invalid JSON:", error);
-        photos = []
     }
-
+    
     useEffect(() => {
         async function loadData(){
             try{
+                setLoading(true);
+                setInvalidProperty(false);
+
                 const propertyData = await fetchPropertyById(params.id);
                 setProperty(propertyData.Property);
 
                 const openHouseData = await fetchOpenHouseById(propertyData.Property.L_ListingID);
                 setOpenHouses(openHouseData.Openhouses);
+
             } catch(error){
                 setInvalidProperty(true);
                 console.error(error.message);
+            } finally {
+                setLoading(false);
             }
         };
         loadData();
@@ -46,6 +53,12 @@ function PropertyDetailPage() {
     function validateDetail(detail){
         return detail != null ? detail : "N/A"
     };
+
+    if(loading){
+        return(
+            <div className="info-message">Loading property...</div>
+        )
+    }
 
     const propertyDetails = [
         {label: "Property Type", value: property.L_Type_},
@@ -87,6 +100,11 @@ function PropertyDetailPage() {
             </div>
         )
     }
+
+
+
+    const photos = loadPhotos();
+
     return(
         <div className="detail-page">
 

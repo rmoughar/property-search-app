@@ -26,11 +26,6 @@ function FavoritesPage() {
         offset: '0'
     });
 
-    function handleSearch(tempFilters){
-        setFilters(tempFilters);
-        setSort('');
-        changeCurrentPage(1);
-    } 
 
     const [sort, setSort] = useState('');
 
@@ -41,6 +36,12 @@ function FavoritesPage() {
         changeCurrentPage,
         changeItemsPerPage
       } = usePagination(favorites.length);
+
+    function handleSearch(tempFilters){
+        setFilters(tempFilters);
+        setSort('');
+        changeCurrentPage(1);
+    } 
 
     const controller = useRef(null);
     useEffect(() => {
@@ -80,7 +81,7 @@ function FavoritesPage() {
                 }
             };
             loadProperties();
-        }, [favorites, offset, pagination.itemsPerPage, sort, filters]);    
+        }, [favorites, offset, pagination.itemsPerPage, sort, filters, pagination.currentPage]);    
 
     return(
         <div className="favorites-page">
@@ -95,7 +96,6 @@ function FavoritesPage() {
                 </>
             ) : (
                 <div>
-                    {console.log('totalpages:', totalPages)}
                     <PropertyListControls
                         offset={offset}
                         itemsPerPage={pagination.itemsPerPage}

@@ -59,6 +59,7 @@ function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
                         jumpInput === index ? (
                            
                             <form
+                            key={index}
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 handleButton(Number(inputValue));
@@ -72,11 +73,21 @@ function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
                             </form>
 
                         ) : (
-                            <button className={page === currentPage ? "active" : ''} onClick={() => setJumpInput(index)}>{page}</button>
+                            <button 
+                                key={index}
+                                className={page === currentPage ? "active" : ''} 
+                                onClick={() => setJumpInput(index)}>
+                                {page}
+                            </button>
                         )
                         
                     ) : (
-                        <button className={page === currentPage ? "active" : ''} onClick={() => handleButton(page)}>{page}</button>
+                        <button 
+                            key={index}
+                            className={page === currentPage ? "active" : ''} 
+                            onClick={() => handleButton(page)}>
+                            {page}
+                        </button>
                     )
                     
                     
@@ -85,7 +96,8 @@ function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
                 <button 
                     disabled={currentPage === totalPages}
                     onClick={() => handleButton(currentPage + 1)}>{'>'}
-                </button>
+                </button>          
+                
             </div>
         </div>
     )

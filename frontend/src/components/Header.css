@@ -1,0 +1,22 @@
+.app-header{
+  text-align: left;
+  padding-left: 1rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid gray;
+
+  /* position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1; */
+}
+
+.header-box{
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+}
+
+h1:hover{
+    color: blue;
+    cursor: pointer;
+}

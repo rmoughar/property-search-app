@@ -1,5 +1,6 @@
 .properties-grid{
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+  justify-content: left;
+  grid-template-columns: repeat(auto-fit, minmax(24.9vw, 24.9vw));
   row-gap: 30px;
 }
