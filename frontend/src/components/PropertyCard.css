@@ -67,10 +67,12 @@ a {
     background: none;
     color: white;
     transition: color .2s;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
 }
 
 .card-favorite-button:hover{
     cursor: pointer;
+    transform: scale(1.1);
 }
 
 .card-favorited{
