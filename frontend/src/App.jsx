@@ -6,6 +6,7 @@ import { FavoritesProvider } from './context/provider/FavoritesProvider'
 import FavoritesPage from './pages/FavoritesPage'
 import Header from './components/Header'
 import GlobalErrorBoundary from './errorBoundaries/GlobalErrorBoundary'
+import NaturalSearchPage from './pages/NaturalSearchPage'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
                 <Route path='/' element={<ListingsPage />} />
                 <Route path='/property/:id' element={<PropertyDetailPage />} />
                 <Route path='/favorites' element={<FavoritesPage />}/>
+                <Route path='/ai-search' element={<NaturalSearchPage />}/>
             </Routes>
         </FavoritesProvider>
         </GlobalErrorBoundary>

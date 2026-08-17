@@ -157,7 +157,7 @@ propertiesRouter.get('/', async (req,res) => {
 })
 
 propertiesRouter.get('/:id/openhouses', async (req,res) => {
-        try{
+    try{
         const sqlQuery = " select * from rets_openhouse where L_ListingID = ? ORDER BY OpenHouseDate, OH_StartTime;";
         const validQuery = 'SELECT 1 FROM rets_property WHERE L_ListingID = ?';
         const id = req.params.id;
@@ -239,61 +239,6 @@ propertiesRouter.get('/:id', async (req,res) => {
         res.status(500).send('Error')
     }
 })
-
-// propertiesRouter.get('/ids/:ids', async (req,res) => {
-//     try{
-
-//         const ids = req.params.ids.split(',');
-//         //Confirms param validity
-//         if (ids.some(id => !Number.isFinite(Number(id)))) {
-//             return res.status(400).send("IDs must be valid numbers!");
-//         }
-
-//         const marks = ids.map(() => '?').join(',');
-
-//         let limit = 20;
-//         let offset = 0;
-
-//         if(req.query.offset){
-//             offset = Number(req.query.offset);
-//             handleNum(offset, 'offset');
-//         }
-
-//         if(req.query.limit){
-//             limit = Number(req.query.limit);
-//             if(limit <= 0){
-//                 return res.status(400).send(`Limit must be greater than 0!`);
-//             }
-//             handleNum(limit, 'limit');
-//         }
-
-//         const sqlQuery = ` 
-//             SELECT * 
-//             FROM rets_property 
-//             WHERE L_ListingID IN (${marks})
-//         `;
-
-//         //Uses parameterized query to defend against SQLi
-//         const [results] = await pool.query(
-//             sqlQuery,[...ids,...ids, limit, offset]
-//         )
-
-//         if (results.length === 0){
-//             return res.status(404).send('No properties found!')
-//         }
-        
-//         res.json({
-//             total: ids.length,
-//             limit: limit,
-//             offset: offset,
-//             Properties: results
-//         });
-//     }
-//     catch (err){
-//         console.error(err);
-//         res.status(500).send('Error')
-//     }
-// })
 
 propertiesRouter.get('/ids/:ids', async (req,res) => {
     try{
