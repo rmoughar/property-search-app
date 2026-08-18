@@ -1,44 +1,76 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchNaturalFilters } from '../api/client';
+import './AiSearch.css'
 
 function AiSearch( {filters, onSearch} ) {
-    const [tempFilters, setTempFilters] = useState(filters);
     const [query, setQuery] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [searched, setSearched] = useState(false)
+    const [error, setError] = useState(null);
 
-    async function getFilters(){
+    async function searchWithAI(){
         try{
+            setLoading(true);
+            setSearched(false)
             const result = await fetchNaturalFilters(query);
-            setTempFilters(result.filters)
-        }catch(err){
-            console.error(err);
+            onSearch(result.filters)
+            setSearched(true)
+        }catch(error){
+            console.error(error);
+            setError(error);
+        }finally{
+            setLoading(false)
         }
 
     }
 
+    useEffect(() => {
+        const isEmpty = Object.values(filters).every(value => value === '');
+
+        if (isEmpty) {
+            setQuery('');
+            setSearched(false);
+        }
+        
+    }, [filters]);
+
     return (
-        <div>
+        <div
+        className='ai-search-container'>
             <form
             className='ai-search'
             onSubmit={(e) => {
                 e.preventDefault();
-                getFilters();
-                onSearch(tempFilters);
+                searchWithAI();
             }}>
 
-                <input
-                type='text'
-                placeholder='What kind of property are you looking for?'
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}>
-                </input>
+                <div className='input-container'>
+                    <input
+                        className='ai-search-input'
+                        disabled={loading}
+                        type='text'
+                        placeholder='What kind of property are you looking for?'
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}>
+                    </input>
 
-                <button type='submit'>Search</button>
+                    {searched ? (
+                        <div className='completed-search'>Filters Applied ✔</div>
+                    ) : error ?(
+                        <div className='failed-search'>Couldn't Apply Filters, Try Again ❌</div>
+                    ) : (
+                        <></>
+                    )}
+                    
+                </div>
+
+                <button
+                className='search-button' 
+                disabled={loading}
+                type='submit'>{loading ? 'Thinking...' : 'Search'}</button>
             </form>
         </div>
     )
 }
 
 export default AiSearch;
-
-{/* const result = await fetchNatural(testinput);
-        setTest(result.body)*/}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./PropertyFilters.css"
+import { useEffect } from "react";
 
 function formatPrice(value){
   const digits = value.replace(/\D/g, '');
@@ -10,8 +11,11 @@ function formatPrice(value){
 
 
 function PropertyFilters( {filters, onSearch} ){
-
   const [tempFilters, setTempFilters] = useState(filters);
+
+  useEffect(() => {
+    setTempFilters(filters);
+  }, [filters])
     
   return(
     <div>
@@ -58,7 +62,7 @@ function PropertyFilters( {filters, onSearch} ){
           <select
             id="beds"
             value={tempFilters.beds}
-            onChange={e => setTempFilters((prev) => ({...prev, beds:e.target.value,}))}>
+            onChange={e => setTempFilters((prev) => ({...prev, beds:Number(e.target.value),}))}>
             <option value={''}>Any</option>
             <option value={'1'}>1</option>
             <option value={'2'}>2</option>
@@ -73,7 +77,7 @@ function PropertyFilters( {filters, onSearch} ){
           <select
           id="baths"
           value={tempFilters.baths}
-          onChange={e => setTempFilters((prev) => ({...prev, baths:e.target.value,}))}>
+          onChange={e => setTempFilters((prev) => ({...prev, baths:Number(e.target.value),}))}>
             <option value={''}>Any</option>
             <option value={'1'}>1</option>
             <option value={'2'}>2</option>

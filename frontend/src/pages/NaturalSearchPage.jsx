@@ -75,9 +75,9 @@ function NaturalSearchPage() {
       },[filters, pagination.currentPage, pagination.itemsPerPage, offset, sort])
 
     return(
-        <div className="listings-page">
-            <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
+        <div className="search-page">
             <AiSearch filters={filters} onSearch={handleSearch}></AiSearch>
+            <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
             
             
             {loading ? (
