@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from "express";
 import propertiesRouter from './routes/properties.js'
 import healthRouter from "./routes/health.js";

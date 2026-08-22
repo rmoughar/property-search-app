@@ -4,6 +4,10 @@ async function validatePhotos(photos){
     const results = await Promise.all(
         photos.map(async url => {
                 try{
+                    //Filters out pdf links in photos
+                    const pathname = new URL(url).pathname.toLowerCase();
+                    if(pathname.endsWith('.pdf') || pathname.includes('/document-pdf/')) return null;
+
                     const response = await fetch(url, {method: 'HEAD'});
                     if(response.ok) return url;
                     return null;
@@ -43,7 +47,3 @@ export async function saveValidPhotos(lisitngID){
         lisitngID
     ])
 }
-
-// saveValidPhotos(1118417283);
-
-//console.log(property.Property.L_Photos);
