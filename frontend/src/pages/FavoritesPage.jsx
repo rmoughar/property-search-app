@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { FavoritesContext } from "../context/FavoritesContext";
+import { FavoritesContext } from "../utils/FavoritesContext";
 import { fetchMultipleProperties } from "../api/client";
 import PropertyGrid from "../components/PropertyGrid";
 import usePagination from "../hooks/usePagination";

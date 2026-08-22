@@ -5,7 +5,7 @@ import './PropertyDetailPage.css'
 import PropertyImageGallery from "../components/PropertyImageGallery";
 import PropertyMap from "../components/PropertyMap";
 import PropertyOpenHouse from "../components/PropertyOpenHouse";
-import { FavoritesContext } from "../context/FavoritesContext";
+import { FavoritesContext } from "../utils/FavoritesContext";
 
 function PropertyDetailPage() {
     const [property, setProperty] = useState(null);

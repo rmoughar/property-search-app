@@ -1,6 +1,6 @@
 import {render, screen, cleanup, fireEvent} from "@testing-library/react"
 import { describe, test, expect, vi, afterEach, beforeEach } from 'vitest';
-import Pagination from '../components/Pagination';
+import Pagination from "../src/components/Pagination";
 
 // Create vitest mock fetch
 const mockChangePage = vi.fn();
