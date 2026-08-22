@@ -1,5 +1,5 @@
-import { fetchFilteredProperties } from '../api/client';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { fetchFilteredProperties } from '../src/api/client';
 
 // Create vitest mock fetch
 const mockFetch = vi.fn();

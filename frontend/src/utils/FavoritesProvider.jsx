@@ -1,5 +1,5 @@
-import useFavorites from "../../hooks/useFavorites";
-import { FavoritesContext } from "../FavoritesContext";
+import useFavorites from "../hooks/useFavorites";
+import { FavoritesContext } from "./FavoritesContext";
 
 
 export function FavoritesProvider({children}) {

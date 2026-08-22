@@ -2,10 +2,10 @@ import { Route, Routes } from 'react-router'
 import './App.css'
 import ListingsPage from './pages/ListingsPage'
 import PropertyDetailPage from './pages/PropertyDetailPage'
-import { FavoritesProvider } from './context/provider/FavoritesProvider'
+import { FavoritesProvider } from './utils/FavoritesProvider'
 import FavoritesPage from './pages/FavoritesPage'
 import Header from './components/Header'
-import GlobalErrorBoundary from './errorBoundaries/GlobalErrorBoundary'
+import GlobalErrorBoundary from './components/errorboundaries/GlobalErrorBoundary'
 import NaturalSearchPage from './pages/NaturalSearchPage'
 
 function App() {

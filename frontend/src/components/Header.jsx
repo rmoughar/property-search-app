@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Link } from "react-router";
-import { FavoritesContext } from "../context/FavoritesContext";
+import { FavoritesContext } from "../utils/FavoritesContext";
 import './Header.css'
 
 function Header(){
