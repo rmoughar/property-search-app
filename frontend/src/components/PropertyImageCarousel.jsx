@@ -9,16 +9,40 @@ function PropertyImageCarousel({images}) {
 
     return(
         <div className="carousel">
+            {images.length > 1 ? (
+                <>
+                    <button
+                        className="left-arrow"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setImageError(false);
+                            currentImage === 0 ? setCurrentImage(images.length - 1) : setCurrentImage(prev => prev - 1);
+                        }}> {'<'}
+                    </button>
 
-            <button
-                className="left-arrow"
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setImageError(false);
-                    currentImage === 0 ? setCurrentImage(images.length - 1) : setCurrentImage(prev => prev - 1);
-                }}> {'<'}
-            </button>
+                    
+
+                    <button 
+                        className="right-arrow"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setImageError(false);
+                            currentImage === images.length - 1 ? setCurrentImage(0) : setCurrentImage(prev => prev + 1);
+                        }}>{'>'}
+                    </button>
+                </>
+            ) : (<></>)}
+
+            {images.length !== 0 ? (
+                <div
+                    className="counter">
+                        {currentImage + 1} / {images.length}
+                </div>
+            ) : (<></>)}
+
+            
 
             {image && !imageError ? (
                 <img
@@ -28,21 +52,6 @@ function PropertyImageCarousel({images}) {
             ) : (
                 <div className="noImage">No Image Available</div>
             )}
-
-            <button 
-                className="right-arrow"
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setImageError(false);
-                    currentImage === images.length - 1 ? setCurrentImage(0) : setCurrentImage(prev => prev + 1);
-                }}>{'>'}
-            </button>
-
-            <div
-            className="counter">
-                {currentImage + 1} / {images.length}
-            </div>
 
         </div>
     )

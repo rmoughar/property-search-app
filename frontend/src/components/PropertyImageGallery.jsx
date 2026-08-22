@@ -3,11 +3,18 @@ import './PropertyImageGallery.css'
 
 function PropertyImageGallery({images}) {
     const [currentImage, setCurrentImage] = useState(0);
-    const [imageError, setImageError] = useState(null)
+    const [failedImagaes, setFailedImages] = useState(new Set());
     const image = images[currentImage]
     const [lightbox, setLightBox] = useState(false);
     const thumbnailRef = useRef(null);
 
+    function handleImageError(url){
+        setFailedImages(prev => {
+            const updated = new Set(prev);
+            updated.add(url);
+            return updated;
+        })
+    }
     useEffect(() => {
         const activeThumbnail = thumbnailRef.current?.querySelector(".active-thumbnail");
 
@@ -23,13 +30,10 @@ function PropertyImageGallery({images}) {
 
         function handleKeyDown(e){
             if(e.key === "ArrowLeft") {
-                setImageError(false);
-
                 currentImage === 0 ? setCurrentImage(images.length - 1) : setCurrentImage(prev => prev - 1);
             }
 
             if(e.key === "ArrowRight"){
-                setImageError(false);
                 currentImage === images.length - 1 ? setCurrentImage(0) : setCurrentImage(prev => prev + 1);
             }
 
@@ -45,85 +49,88 @@ function PropertyImageGallery({images}) {
         }
     }, [currentImage, images.length, lightbox])
 
+
     return(
         <div className="gallery">
 
             <div className="main-image-container">
 
-                <button
-                    className="gallery-left-arrow"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setImageError(false);
-                        currentImage === 0 ? setCurrentImage(images.length - 1) : setCurrentImage(prev => prev - 1);
-                    }}> {'<'}
-                </button>
 
-                {image && !imageError ? (
+
+                {image && !failedImagaes.has(image) ? (
                     <img
                         className="main-image"
                         src={image} 
-                        onError={() => setImageError(true)}
+                        onError={() => handleImageError(image)}
                         onClick={() => setLightBox(true)}/>
                 ) : (
                     <div className="noImage">No Image Available</div>
                 )}
-
-                <button 
-                    className="gallery-right-arrow"
+                
+                <button className="gallery-left-arrow"
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setImageError(false);
+                        currentImage === 0 ? setCurrentImage(images.length - 1) : setCurrentImage(prev => prev - 1);
+                    }}> {'<'}
+                </button>
+
+                <button className="gallery-right-arrow"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         currentImage === images.length - 1 ? setCurrentImage(0) : setCurrentImage(prev => prev + 1);
                     }}>{'>'}
                 </button>
-
-                <div
-                    className="gallery-counter">
-                        {currentImage + 1} / {images.length}
-                </div>
+                
+                {images.length !== 0 ? (
+                    <div className="gallery-counter">
+                            {currentImage + 1} / {images.length}
+                    </div>
+                ) : (<></>)}
 
             </div>
             
-            <div className="thumbnail-container">
-                <button
-                    className="thumbnail-button"
-                    onClick={() =>
-                        thumbnailRef.current.scrollBy({
-                            left: -300,
-                            behavior: "smooth"
-                        })
-                }>{'<'}</button>
+            {images.length > 1 ? (
+                <div className="thumbnail-container">
+                    <button
+                        className="thumbnail-button"
+                        onClick={() =>
+                            thumbnailRef.current.scrollBy({
+                                left: -300,
+                                behavior: "smooth"
+                            })
+                    }>{'<'}</button>
 
-                <div 
-                ref={thumbnailRef}
-                className="thumbnail-strip">
-                    {images.map((image,index) => (
-                        image && !imageError ? (
-                            <img
-                                key={index}
-                                className={`thumbnail-image ${currentImage === index ? "active-thumbnail" : ""}`}
-                                src={image} 
-                                onError={() => setImageError(true)}
-                                onClick={() => setCurrentImage(index)}/>
-                            ) : (
-                                <div className="noImage">No Image Available</div>
-                            )
-                    ))}
+                    <div 
+                    ref={thumbnailRef}
+                    className="thumbnail-strip">
+                        {images.map((image,index) => (
+                            image && !failedImagaes.has(image) ? (
+                                <img
+                                    key={index}
+                                    className={`thumbnail-image ${currentImage === index ? "active-thumbnail" : ""}`}
+                                    src={image} 
+                                    onError={() => handleImageError(image)}
+                                    onClick={() => setCurrentImage(index)}/>
+                                ) : (
+                                    <div className="noImage">No Image Available</div>
+                                )
+                        ))}
+                    </div>
+
+                    <button
+                        className="thumbnail-button"
+                        onClick={() =>
+                            thumbnailRef.current.scrollBy({
+                                left: 300,
+                                behavior: "smooth"
+                            })
+                    }>{'>'}</button>
+
                 </div>
-
-                <button
-                    className="thumbnail-button"
-                    onClick={() =>
-                        thumbnailRef.current.scrollBy({
-                            left: 300,
-                            behavior: "smooth"
-                        })
-                }>{'>'}</button>
-
-            </div>
+            ) : (<></>)}
+            
             
             {lightbox && (
                 <div className="lightbox" 
@@ -136,7 +143,6 @@ function PropertyImageGallery({images}) {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    setImageError(false);
                                     currentImage === 0 ? setCurrentImage(images.length - 1) : setCurrentImage(prev => prev - 1);
                                 }}> {'<'}
                         </button>
@@ -159,7 +165,6 @@ function PropertyImageGallery({images}) {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    setImageError(false);
                                     currentImage === images.length - 1 ? setCurrentImage(0) : setCurrentImage(prev => prev + 1);
                                 }}>{'>'}
                         </button>

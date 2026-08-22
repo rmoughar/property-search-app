@@ -4,22 +4,22 @@ import PropertyImageCarousel from "./PropertyImageCarousel";
 import { FavoritesContext } from '../context/FavoritesContext';
 
 function PropertyCard( {property} ){
-    const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
+  const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
 
-
-  let photos;
-
-  try{
-    if(property.L_Photos === ''){
-      photos = []
-    }else{
-      photos = JSON.parse(property.L_Photos)
+  function loadPhotos(){
+        try{
+            return property.ValidatedPhotos ? 
+            JSON.parse(property.ValidatedPhotos) : 
+            property.L_Photos ?
+            JSON.parse(property.L_Photos) : 
+            []
+        }catch(error){
+            console.error("Invalid JSON:", error);
+            return []
+        }
     }
-  }catch(error){
-    console.error("Invalid JSON:", error);
-    photos = []
-  }
-
+    
+    const photos = loadPhotos();
 
   return(
     <li className='property-card'>

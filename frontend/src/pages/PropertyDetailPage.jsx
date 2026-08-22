@@ -17,11 +17,11 @@ function PropertyDetailPage() {
 
     function loadPhotos(){
         try{
-            if(!property.L_Photos){
-                return []
-            }else{
-                return JSON.parse(property.L_Photos)
-            }
+            return property.ValidatedPhotos ? 
+            JSON.parse(property.ValidatedPhotos) : 
+            property.L_Photos ?
+            JSON.parse(property.L_Photos) : 
+            []
         }catch(error){
             console.error("Invalid JSON:", error);
             return []
