@@ -14,18 +14,20 @@ app.use(cors({origin: allowedOrigins}));
 app.use(express.json());
 
 app.use((req, res, next) => {
-    if(req.originalUrl === '/favicon.ico'){
-        return next();
-    }
-  console.log('Method:', req.method);
-  console.log('URL:', `${req.protocol}://${req.get('host')}${req.originalUrl}`);
-  console.log('Timestamp:', new Date().toLocaleString());
-  const startTime = Date.now();
+
+  if(req.originalUrl === '/favicon.ico'){
+    return next();
+  }
+
+  const start = performance.now();
+
   res.on('finish', () =>{
-    const timeDiff = Date.now() - startTime;
-    console.log('Response Time:', timeDiff, 'ms');
-    console.log('Stauts:', res.statusCode);
-  })
+    const timeDiff = performance.now() - start;
+    console.log(
+        `${req.method} ${req.originalUrl} ${res.statusCode} - ${timeDiff.toFixed(2)}ms`
+    )
+  });
+
   next();
 });
 

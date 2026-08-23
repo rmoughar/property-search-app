@@ -63,9 +63,7 @@ function FavoritesPage() {
                     const params = {...filters, offset:offset, limit: pagination.itemsPerPage, sort:sort};
                     const slicedFavorites = favorites.slice(offset, offset+pagination.itemsPerPage);
 
-                    if(slicedFavorites.length === 0){
-                        changeCurrentPage(pagination.currentPage-1)
-                    }
+
 
                     const propertyData = await fetchMultipleProperties(slicedFavorites, params, controller.current.signal);
                     setFavoriteProperties(propertyData.Properties);
@@ -83,6 +81,13 @@ function FavoritesPage() {
             loadProperties();
         }, [favorites, offset, pagination.itemsPerPage, sort, filters, pagination.currentPage]);    
 
+    //Keep the current page valid when favorites are removed
+    useEffect(() => {
+        const maxPage = Math.max(1, Math.ceil(favorites.length / pagination.itemsPerPage));
+
+        if(pagination.currentPage > maxPage)changeCurrentPage(maxPage);
+    }, [changeCurrentPage, favorites.length, pagination.currentPage, pagination.itemsPerPage])
+
     return(
         <div className="favorites-page">
             <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
@@ -91,7 +96,7 @@ function FavoritesPage() {
                 <div className="info-message">loading properties...</div>
             ) : error ? (
                 <>
-                    {console.log('error:', error)}
+                    {console.error('error:', error)}
                     <div className="info-message">{error.message}</div>
                 </>
             ) : (

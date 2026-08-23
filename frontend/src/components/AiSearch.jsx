@@ -27,7 +27,10 @@ function AiSearch( {filters, onSearch} ) {
     useEffect(() => {
         const isEmpty = Object.values(filters).every(value => value === '');
 
+        //This effect intentionally resets the AI search when the parent clears filters
+        //State is loacal to this component, so it can't be derived directly from filters
         if (isEmpty) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setQuery('');
             setSearched(false);
         }

@@ -82,7 +82,7 @@ function ListingsPage() {
         <div className="info-message">loading properties...</div>
       ) : error ? (
         <>
-          {console.log('error:',error)}
+          {console.error('error:',error)}
           <div className="info-message">{error.message}</div>
         </>
       ) : properties.total === 0 ? (
