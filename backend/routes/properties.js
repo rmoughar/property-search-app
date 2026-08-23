@@ -125,7 +125,6 @@ propertiesRouter.get('/', async (req,res) => {
             countQuery += ' WHERE ' + conditions.join(' AND ');
         }
 
-        //console.log("count query:", countQuery);
         const [countRows] = await pool.query(
             countQuery,values
         )
@@ -177,9 +176,6 @@ propertiesRouter.get('/:id/openhouses', async (req,res) => {
         };
 
         handleNum(Number(id), 'id');
-
-        /*console.log("query:", sqlQuery);
-        console.log("id:", Number(id));*/
 
         const [property] = await pool.query(
             validQuery,[id]

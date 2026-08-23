@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useState } from "react";
 
 export const usePagination = (total) => {
@@ -10,9 +11,9 @@ export const usePagination = (total) => {
         setPagination(prev => ({...prev, currentPage:page}))
     }
 
-    function changeItemsPerPage(count){
+    const changeItemsPerPage = useCallback((count) => {
         setPagination(prev => ({...prev, itemsPerPage:count}))
-    }
+    }, [])
 
 
     return {pagination, totalPages, offset, changeCurrentPage, changeItemsPerPage};

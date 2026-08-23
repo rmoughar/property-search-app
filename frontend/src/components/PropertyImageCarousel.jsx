@@ -21,8 +21,6 @@ function PropertyImageCarousel({images}) {
                         }}> {'<'}
                     </button>
 
-                    
-
                     <button 
                         className="right-arrow"
                         onClick={(e) => {
