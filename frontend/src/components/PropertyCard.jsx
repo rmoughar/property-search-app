@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import './PropertyCard.css'
 import PropertyImageCarousel from "./PropertyImageCarousel";
 import { FavoritesContext } from '../utils/FavoritesContext';
+import PropTypes from 'prop-types';
 
 function PropertyCard( {property} ){
   const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
@@ -55,5 +56,21 @@ function PropertyCard( {property} ){
     </li>
   )
 }
+
+PropertyCard.PropTypes = {
+    property: PropTypes.shape({
+        L_ListingID: PropTypes.string,
+        L_SystemPrice: PropTypes.number,
+        L_Keyword2: PropTypes.number,
+        LM_Dec_3: PropTypes.string,
+        LM_Int2_3: PropTypes.number,
+        L_Address: PropTypes.string,
+        L_City: PropTypes.string,
+        L_State: PropTypes.string,
+        L_Zip: PropTypes.string,
+        ValidatedPhotos: PropTypes.string,
+        L_Photos: PropTypes.string,
+    }).isRequired,
+};
 
 export default PropertyCard;
