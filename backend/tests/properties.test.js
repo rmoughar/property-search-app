@@ -1,5 +1,4 @@
 import { beforeEach, expect, jest, test } from '@jest/globals';
-import { LocalShellCallItemAction$outboundSchema, parameters1ToJSON, responseToJSON } from '@openrouter/sdk/models';
 import request from 'supertest';
 
 const mockQuery = jest.fn();
@@ -16,6 +15,8 @@ const {default: app} = await import('../app.js');
 beforeEach(() => {
     mockQuery.mockClear();
 })
+
+//api/properties
 
 test('GET /api/properties returns properties', async() => {
     mockQuery.mockResolvedValueOnce([
@@ -56,30 +57,6 @@ test('GET /api/properties returns properties', async() => {
             }
         ]
     })
-});
-
-test('GET /api/properties/:id returns a property', async () => {
-    mockQuery.mockResolvedValueOnce([
-        [
-            {
-                L_ListingID: 12345,
-                L_City: 'Other',
-                L_SystemPrice: 300000
-            }
-        ]
-    ]);
-
-    const response = await request(app).get('/api/properties/12345');
-
-    expect(response.status).toBe(200);
-
-    expect(response.body).toEqual({
-        Property: {
-            L_ListingID: 12345,
-            L_City: 'Other',
-            L_SystemPrice: 300000
-        }
-    });
 });
 
 test('GET /api/properties handles pagination', async () => {
@@ -225,3 +202,142 @@ test.each([
         expect(mockQuery).not.toHaveBeenCalled();
     }
 )
+
+//api/properties/id
+
+test('GET /api/properties/:id returns a property', async () => {
+    mockQuery.mockResolvedValueOnce([
+        [
+            {
+                L_ListingID: 12345,
+                L_City: 'Other',
+                L_SystemPrice: 300000
+            }
+        ]
+    ]);
+
+    const response = await request(app).get('/api/properties/12345');
+
+    expect(response.status).toBe(200);
+
+    expect(response.body).toEqual({
+        Property: {
+            L_ListingID: 12345,
+            L_City: 'Other',
+            L_SystemPrice: 300000
+        }
+    });
+});
+
+test('GET /api/properties/:id returns 404 for unknown property', async () => {
+    mockQuery.mockResolvedValueOnce([
+        []
+    ]);
+
+    const response = await request(app).get('/api/properties/12345');
+
+    expect(response.status).toBe(404);
+
+    expect(response.text).toBe('Property ID not recognized!');
+});
+
+test('GET /api/properties/:id rejects invalid ID', async () => {
+    const response = await request(app).get('/api/properties/abc');
+
+    expect(response.status).toBe(400);
+
+    expect(response.text).toBe('id must be a valid number!');
+
+    expect(mockQuery).not.toHaveBeenCalled();
+});
+
+
+//api/properties/openhouses
+
+test('GET /api/properties/:id/openhouses returns open houses', async () => {
+    mockQuery
+        .mockResolvedValueOnce([
+            [
+                {
+                    L_ListingID: 12345
+                }
+            ]
+        ])
+        .mockResolvedValueOnce([
+            [
+                {
+                    L_ListingID: 12345,
+                    OpenHouseDate: '2026-08-30',
+                    OH_StartTime: '12:00:00'
+                },
+                {
+                    L_ListingID: 12345,
+                    OpenHouseDate: '2026-09-30',
+                    OH_StartTime: '13:00:00'
+                }
+            ]
+        ]);
+
+        const response = await request(app).get('/api/properties/12345/openhouses');
+
+        expect(response.status).toBe(200);
+
+        expect(response.body).toEqual({
+            Openhouses: [
+                {
+                    L_ListingID: 12345,
+                    OpenHouseDate: '2026-08-30',
+                    OH_StartTime: '12:00:00'
+                },
+                {
+                    L_ListingID: 12345,
+                    OpenHouseDate: '2026-09-30',
+                    OH_StartTime: '13:00:00'
+                }
+            ]
+        });
+});
+
+test('GET /api/properties/:id/openhouses returns empty results', async () => {
+    mockQuery
+        .mockResolvedValueOnce([
+            [
+                {
+                    L_ListingID: 12345
+                }
+            ]
+        ])
+        .mockResolvedValueOnce([
+            []
+        ]);
+
+        const response = await request(app).get('/api/properties/12345/openhouses');
+
+        expect(response.status).toBe(200);
+
+        expect(response.body).toEqual({
+            Openhouses: []
+        });
+});
+
+test('GET /api/properties/:id/openhouses returns 404 for unknown property', async () => {
+    mockQuery.mockResolvedValueOnce([
+            []
+        ]);
+
+        const response = await request(app).get('/api/properties/12345/openhouses');
+
+        expect(response.status).toBe(404);
+        expect(response.text).toBe('Property ID not recognized!');
+
+        expect(mockQuery).toHaveBeenCalledTimes(1);
+});
+
+test('GET /api/properties/:id/openhouses rejects invalid ID', async () => {
+        const response = await request(app).get('/api/properties/abc/openhouses');
+
+        expect(response.status).toBe(400);
+        expect(response.text).toBe('id must be a valid number!');
+
+        expect(mockQuery).not.toHaveBeenCalled();
+});
