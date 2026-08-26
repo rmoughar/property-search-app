@@ -1,6 +1,8 @@
 import express from 'express';
 import pool from '../config/pool.js';
 import e from 'express';
+import { RestartProcess } from 'concurrently';
+import { isValidNumber } from '../utils/validation.js';
 
 
 const propertiesRouter = express.Router();
@@ -16,12 +18,14 @@ function handleFiltering(req, res){
     //Confirms param validity and adds to values
     function handleNum(input, condition){
         if(!(typeof input === 'number')){
-            return res.status(400).send(`${condition} must be a valid number!`)
+            return `${condition} must be a valid number!`
         }
         if(!(Number.isFinite(input))){
-            return res.status(400).send(`${condition} must be a finite number!`)
+            return `${condition} must be a finite number!`
         }
+
         values.push(input);
+        return null;
     };
     
     if(req.query.city){
@@ -31,17 +35,22 @@ function handleFiltering(req, res){
 
     if(req.query.zipcode){
         conditions.push('L_Zip = ?')
-        handleNum(Number(req.query.zipcode), 'zipCode')
+        const error = handleNum(Number(req.query.zipcode), 'zipCode')
+
+        if(error) return {error};
     }
 
     if(req.query.minPrice){
         conditions.push('L_SystemPrice >= ?')
-        handleNum(Number(req.query.minPrice), 'minPrice');
+        const error = handleNum(Number(req.query.minPrice), 'minPrice');
+        
+        if(error) return {error};
     }
 
     if(req.query.maxPrice){
         conditions.push('L_SystemPrice <= ?')
-        handleNum(Number(req.query.maxPrice), 'maxPrice');
+        const error = handleNum(Number(req.query.maxPrice), 'maxPrice');
+        if(error) return {error};
     }
 
     if(req.query.beds){
@@ -52,7 +61,8 @@ function handleFiltering(req, res){
             conditions.push('L_Keyword2 = ?')
         }
         
-        handleNum(Number(req.query.beds), 'beds');
+        const error = handleNum(Number(req.query.beds), 'beds');
+        if(error) return {error};
     }
 
     if(req.query.baths){
@@ -62,21 +72,25 @@ function handleFiltering(req, res){
         else{
             conditions.push('LM_Dec_3 = ?')
         }
-        handleNum(Number(req.query.baths), 'baths');
+
+        const error = handleNum(Number(req.query.baths), 'baths');
+        if(error) return {error};
     }
 
     if(req.query.limit){
         limit = Number(req.query.limit);
         if(limit <= 0){
-            return res.status(400).send(`Limit must be greater than 0!`);
+            return {error: `Limit must be greater than 0!`};
         }
-        handleNum(limit, 'limit');
+        const error = handleNum(limit, 'limit');
+        if(error) return {error};
     }
     else values.push(limit);
 
     if(req.query.offset){
         offset = Number(req.query.offset);
-        handleNum(offset, 'offset');
+        const error = handleNum(offset, 'offset');
+        if(error) return {error};
     }
     else values.push(offset); 
 
@@ -118,7 +132,11 @@ propertiesRouter.get('/', async (req,res) => {
         let sqlQuery = "SELECT * FROM rets_property";
         let countQuery = "SELECT COUNT(*) FROM rets_property";
         
-        const [conditions, values, limit, offset] = handleFiltering(req, res);
+        const filtering = handleFiltering(req, res);
+
+        if(filtering.error) return res.status(400).send(filtering.error);
+
+        const [conditions, values, limit, offset] = filtering;
 
         if (conditions.length !== 0){
             sqlQuery += ' WHERE ' + conditions.join(' AND ');
@@ -162,20 +180,13 @@ propertiesRouter.get('/:id/openhouses', async (req,res) => {
         const id = req.params.id;
 
         //Confirms param validity
-        function handleNum(input, condition){
-            if(!(Number.isInteger(input))){
-                return res.status(400).send(`${condition} must be a valid number!`);
-            }
-            if(!(Number.isFinite(input))){
-                return res.status(400).send(`${condition} must be a finite number!`);
-            }
+        if(!isValidNumber(Number(id))){
+            return res.status(400).send('id must be a valid number!')
+        }
 
-            if(input <= 0){
-                return res.status(400).send(`${condition} must be a positive number!`)
-            }
-        };
-
-        handleNum(Number(id), 'id');
+        if(Number(id) <= 0){
+            return res.status(400).send('id must be a positive number!');
+        }
 
         const [property] = await pool.query(
             validQuery,[id]
@@ -206,16 +217,9 @@ propertiesRouter.get('/:id', async (req,res) => {
         let id = req.params.id;
 
         //Confirms param validity
-        function handleNum(input, condition){
-            if(!(typeof input === 'number')){
-                return res.status(400).send(`${condition} must be a valid number!`)
-            }
-            if(!(Number.isFinite(input))){
-                return res.status(400).send(`${condition} must be a finite number!`)
-            }
-        };
-
-        handleNum(Number(id), 'id');
+        if(!isValidNumber(Number(id))){
+            return res.status(400).send('id must be a valid number!');
+        }
 
         //Uses parameterized query to defend against SQLi
         const [results] = await pool.query(
@@ -240,7 +244,7 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
     try{
         //Pull and confirm ids validity
         const ids = req.params.ids.split(',');
-        if (ids.some(id => !Number.isFinite(Number(id)))) {
+        if (ids.some(id => !isValidNumber(Number(id)))) {
             return res.status(400).send("IDs must be valid numbers!");
         }
 
