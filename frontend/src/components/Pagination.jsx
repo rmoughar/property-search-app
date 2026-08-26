@@ -35,9 +35,15 @@ function buildPageNumbers(currentPage, totalPages){
 }
 
 function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
-    const pageNumbers = buildPageNumbers(currentPage, totalPages);
     const [jumpInput, setJumpInput] = useState(null);
     const [inputValue, setInputValue] = useState(null);
+    
+    if(totalPages <= 1){
+        return null;
+    }
+
+    const pageNumbers = buildPageNumbers(currentPage, totalPages);
+    
 
     function handleButton(newPage){
         changeCurrentPage(newPage);
