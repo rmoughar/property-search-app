@@ -29,60 +29,60 @@ function handleFiltering(req, res){
             values.push(req.query.city)
         }
 
-        if(req.query.zipcode){
-            conditions.push('L_Zip = ?')
-            handleNum(Number(req.query.zipcode), 'zipCode')
-        }
+    if(req.query.zipcode){
+        conditions.push('L_Zip = ?')
+        handleNum(Number(req.query.zipcode), 'zipCode')
+    }
 
-        if(req.query.minPrice){
-            conditions.push('L_SystemPrice >= ?')
-            handleNum(Number(req.query.minPrice), 'minPrice');
-        }
+    if(req.query.minPrice){
+        conditions.push('L_SystemPrice >= ?')
+        handleNum(Number(req.query.minPrice), 'minPrice');
+    }
 
-        if(req.query.maxPrice){
-            conditions.push('L_SystemPrice <= ?')
-            handleNum(Number(req.query.maxPrice), 'maxPrice');
-        }
+    if(req.query.maxPrice){
+        conditions.push('L_SystemPrice <= ?')
+        handleNum(Number(req.query.maxPrice), 'maxPrice');
+    }
 
-        if(req.query.beds){
-            if(req.query.beds == 5){
-                conditions.push('L_Keyword2 >= ?')
-            }
-            else{
-                conditions.push('L_Keyword2 = ?')
-            }
-            
-            handleNum(Number(req.query.beds), 'beds');
+    if(req.query.beds){
+        if(req.query.beds == 5){
+            conditions.push('L_Keyword2 >= ?')
         }
-
-        if(req.query.baths){
-            if(req.query.baths == 5){
-                conditions.push('LM_Dec_3 >= ?')
-            }
-            else{
-                conditions.push('LM_Dec_3 = ?')
-            }
-            handleNum(Number(req.query.baths), 'baths');
+        else{
+            conditions.push('L_Keyword2 = ?')
         }
-
-        if(req.query.limit){
-            limit = Number(req.query.limit);
-            if(limit <= 0){
-                return res.status(400).send(`Limit must be greater than 0!`);
-            }
-            handleNum(limit, 'limit');
-        }
-        else values.push(limit);
-
-        if(req.query.offset){
-            offset = Number(req.query.offset);
-            handleNum(offset, 'offset');
-        }
-        else values.push(offset); 
-
         
+        handleNum(Number(req.query.beds), 'beds');
+    }
 
-        return [conditions, values, limit, offset];
+    if(req.query.baths){
+        if(req.query.baths == 5){
+            conditions.push('LM_Dec_3 >= ?')
+        }
+        else{
+            conditions.push('LM_Dec_3 = ?')
+        }
+        handleNum(Number(req.query.baths), 'baths');
+    }
+
+    if(req.query.limit){
+        limit = Number(req.query.limit);
+        if(limit <= 0){
+            return res.status(400).send(`Limit must be greater than 0!`);
+        }
+        handleNum(limit, 'limit');
+    }
+    else values.push(limit);
+
+    if(req.query.offset){
+        offset = Number(req.query.offset);
+        handleNum(offset, 'offset');
+    }
+    else values.push(offset); 
+
+    
+
+    return [conditions, values, limit, offset];
 };
 
 function handleSorting(req, res){
@@ -118,7 +118,7 @@ propertiesRouter.get('/', async (req,res) => {
         let sqlQuery = "SELECT * FROM rets_property";
         let countQuery = "SELECT COUNT(*) FROM rets_property";
         
-        const [conditions, values] = handleFiltering(req, res);
+        const [conditions, values, limit, offset] = handleFiltering(req, res);
 
         if (conditions.length !== 0){
             sqlQuery += ' WHERE ' + conditions.join(' AND ');
@@ -143,8 +143,8 @@ propertiesRouter.get('/', async (req,res) => {
         
         res.json({
             total: countRows[0]["COUNT(*)"],
-            limit: req.query.limit ?? limit,
-            offset: req.query.offset ?? offset,
+            limit: limit,
+            offset: offset,
             results: results
         });
     }
