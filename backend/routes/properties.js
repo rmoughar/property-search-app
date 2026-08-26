@@ -256,7 +256,11 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
             WHERE L_ListingID IN (${marks})
         `;
         
-        const [conditions, values, limit, offset] = handleFiltering(req, res);
+        const filtering = handleFiltering(req, res);
+
+        if(filtering.error) return res.status(400).send(filtering.error);
+
+        const [conditions, values, limit, offset] = filtering;
 
         //construct query
         if (conditions.length !== 0){

@@ -203,6 +203,35 @@ test.each([
     }
 )
 
+test('GET /api/properties rejects non-positive limit', async () => {
+    const response = await request(app).get('/api/properties').query({limit: 0});
+
+    expect(response.status).toBe(400);
+    expect(response.text).toBe('Limit must be greater than 0!');
+    expect(mockQuery).not.toHaveBeenCalled();
+})
+
+test('GET /api/properties supports sorting', async () => {
+    mockQuery
+    .mockResolvedValueOnce([
+        [{'COUNT(*)': 1}]
+    ])
+    .mockResolvedValueOnce([
+        [
+            {
+                L_ListingID: 12345,
+                L_SystemPrice: 300000
+            }
+        ]
+    ])
+
+    const response = await request(app).get('/api/properties').query({ sort: 'price:DESC' });
+
+    expect(response.status).toBe(200);
+
+    expect(mockQuery).toHaveBeenLastCalledWith(expect.stringContaining('ORDER BY L_SystemPrice DESC'),[20, 0]);
+});
+
 //api/properties/id
 
 test('GET /api/properties/:id returns a property', async () => {
