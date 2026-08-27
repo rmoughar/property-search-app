@@ -16,7 +16,11 @@
     align-items: baseline;
 }
 
-h1:hover{
+h1:not(.divider):hover{
     color: blue;
     cursor: pointer;
+}
+
+.divider{
+    cursor: default;
 }
