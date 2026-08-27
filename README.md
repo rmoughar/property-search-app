@@ -677,6 +677,7 @@ Jest supports collecting coverage with the `--coverage` flag, including coverage
 - The `/api/properties/ids/:ids` endpoint currently reports `total` based on the number of requested IDs rather than the number of properties returned.
 - The property database is not included in the repository, so running the application with a populated dataset requires obtaining and configuring the appropriate database separately.
 - The backend port and frontend development origin may need to be adjusted through environment/configuration settings depending on the local development environment.
+- Pagination component on smaller screens can overflow scren
 
 ## Future Improvements
 
@@ -687,4 +688,5 @@ Jest supports collecting coverage with the `--coverage` flag, including coverage
 - Add production deployment configuration for the frontend, backend, database, and external API integration.
 - Preserve the user's previous page and search state when navigating to property details so returning from a property restores the page they came from, such as natural-language search results, favorites, or filtered listings.
 - Add a clear all favorites button on the favorites page.
+- Refactor styling to improve mobile user experience
 
