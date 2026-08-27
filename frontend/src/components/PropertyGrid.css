@@ -1,6 +1,12 @@
-.properties-grid{
+.properties-grid {
   display: grid;
-  justify-content: left;
-  grid-template-columns: repeat(auto-fit, minmax(24.9vw, 24.9vw));
-  row-gap: 30px;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 450px));
+  gap: 30px;
+}
+
+@media (max-width: 500px) {
+  .properties-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
