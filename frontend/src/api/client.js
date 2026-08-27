@@ -88,7 +88,3 @@ export async function fetchNaturalFilters(query){
     const result = await response.json();
     return result;
 }
-
-
-//http://localhost:4000/api/properties/1149391864/
-//http://localhost:4000/api/properties/1149391864/openhouses

@@ -9,7 +9,7 @@ async function findPropertiesNeedingValidation(){
             OR PhotosValidatedAt < NOW() - INTERVAL 7 DAY
         LIMIT 500`
     )
-    
+
     return rows;
 } 
 
@@ -21,30 +21,10 @@ export async function refreshPhotoValidations(){
             break;
         }
 
-        const start = performance.now();
-
         await Promise.all(
             properties.map(property =>
                 saveValidPhotos(property.L_ListingID)
             )
         );
-
-        const elapsed = (performance.now() - start) / 1000;
-        console.log(`Validated ${properties.length} properties in ${elapsed.toFixed(2)}s`)
     }
 } 
-
-// const [rows] = await pool.query(`
-//     SELECT COUNT(*) AS count
-//     FROM rets_property
-//     WHERE PhotosValidatedAt IS NULL
-//        OR PhotosValidatedAt < NOW() - INTERVAL 7 DAY
-// `);
-
-// console.log(rows);
-
-// refreshPhotoValidations().catch(error => {
-//     console.error('photo validation failed:', error);
-// });
-
-//rows gives each pair 

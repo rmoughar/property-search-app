@@ -14,6 +14,9 @@ function PropertyFilters( {filters, onSearch} ){
   const [tempFilters, setTempFilters] = useState(filters);
 
   useEffect(() => {
+    // Keep the draft form synchronized with filters that can be
+    // changed externally, such as through the AI search.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTempFilters(filters);
   }, [filters])
     

@@ -1,6 +1,6 @@
  import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
- import PropertyFilters from '../components/PropertyFilters';
  import {fireEvent, render, screen, cleanup} from '@testing-library/react'
+import PropertyFilters from '../src/components/PropertyFilters';
 
 // Create mock functions;
 const mockSetFilter = vi.fn();

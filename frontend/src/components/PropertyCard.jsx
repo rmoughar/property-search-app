@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import './PropertyCard.css'
 import PropertyImageCarousel from "./PropertyImageCarousel";
-import { FavoritesContext } from '../context/FavoritesContext';
+import { FavoritesContext } from '../utils/FavoritesContext';
 
 function PropertyCard( {property} ){
   const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
