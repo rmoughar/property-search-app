@@ -1,11 +1,11 @@
 import express from 'express';
-import pool from '../config/pool.js';
 import { OpenRouter } from '@openrouter/sdk'
 
 const searchRouter = express.Router();
 
 
-
+// Validates and normalizes the filters returned by the AI  
+// before they are passed to the property search endpoint
 function outputValidation(output){
     let filters = {
     city: '', 
@@ -22,6 +22,7 @@ function outputValidation(output){
         if(!output){
             return filters;
         }else{
+            // AI response is returned as a JSON string, parse before validation
             filters = JSON.parse(output);
         }
     }catch(error){
@@ -29,6 +30,7 @@ function outputValidation(output){
         return filters;
     }
 
+    // Reject responses that are valid JSON but aren't filter objects
     if(typeof filters !== 'object' || filters === null || Array.isArray(filters)){
         throw new Error('AI returned an invalid filter object');
     }
@@ -76,7 +78,9 @@ function outputValidation(output){
         validatedFilters.baths = '';
     }
 
-    //Validation Funcs
+    // Validation Functions
+    // AI outpus is validated seperately from the property API so
+    // invalid or unexpected values don't reach the db query
     function isValidNumber(value){
         return value !== "" &&
                value !== null &&
@@ -119,6 +123,7 @@ searchRouter.post('/natural', async (req,res) => {
         })
 
         const extracted = message.choices[0].message.content;
+
         const validatedFilters = outputValidation(extracted);
 
         res.json({

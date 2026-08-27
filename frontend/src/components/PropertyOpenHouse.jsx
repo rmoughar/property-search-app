@@ -42,7 +42,6 @@ function PropertyOpenHouse({openhouses}){
 
         return endTime >= new Date() ? "Active" : "Expired";
     }
-
     
     return(
         <div>

@@ -3,6 +3,7 @@ import { useLocalStorage } from "./useLocalStorage";
 export const useFavorites = () => {
     const [favorites, setfavorites] = useLocalStorage("favorites", []);
 
+    // Add or remove a property ID from the saved favorites
     function toggleFavorite(id){
 
         if(isFavorite(id)){
@@ -13,6 +14,7 @@ export const useFavorites = () => {
 
     }
 
+    // Check whether a property ID is currently saved as a favorite
     function isFavorite(id){
         return favorites.includes(id);
     }

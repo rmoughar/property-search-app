@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 function PropertyCard( {property} ){
   const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
 
+  // Prefer validated photos when available, otherwise fall back to the original photo list.
   function loadPhotos(){
         try{
             return property.ValidatedPhotos ? 

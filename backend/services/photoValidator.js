@@ -1,9 +1,11 @@
 import pool from '../config/pool.js';
 
+// Checks each photo URL concurrently and keeps only links that return a succesful HEAD request
 async function validatePhotos(photos){
     const results = await Promise.all(
         photos.map(async url => {
                 try{
+
                     //Filters out pdf links in photos
                     const pathname = new URL(url).pathname.toLowerCase();
                     if(pathname.endsWith('.pdf') || pathname.includes('/document-pdf/')) return null;
@@ -35,6 +37,7 @@ export async function saveValidPhotos(lisitngID){
     const urls = rows[0].L_Photos ? JSON.parse(rows[0].L_Photos) : [];
     const validPhotos = await validatePhotos(urls);
 
+    // Store the validated photo URLs and the time they were checked    
     const query = `
     UPDATE rets_property
     SET ValidatedPhotos = ?,

@@ -1,7 +1,5 @@
 import express from 'express';
 import pool from '../config/pool.js';
-import e from 'express';
-import { RestartProcess } from 'concurrently';
 import { isValidNumber } from '../utils/validation.js';
 
 
@@ -9,13 +7,15 @@ const propertiesRouter = express.Router();
 
 let sqlQuery = "SELECT * FROM rets_property"
 
+// Builds SQL filter conditions and their corresponding parameter values
+// Validates pagination parameters and provides default limit/offset values
 function handleFiltering(req, res){
     const conditions = [];
     const values = [];
     let limit = 20;
     let offset = 0;
 
-    //Confirms param validity and adds to values
+    // Validates numeric query parameters AND adds valid values to the parameter list
     function handleNum(input, condition){
         if(!(typeof input === 'number')){
             return `${condition} must be a valid number!`
@@ -53,6 +53,7 @@ function handleFiltering(req, res){
         if(error) return {error};
     }
 
+    // Value of 5 represents "5 or more" beds
     if(req.query.beds){
         if(req.query.beds == 5){
             conditions.push('L_Keyword2 >= ?')
@@ -64,7 +65,8 @@ function handleFiltering(req, res){
         const error = handleNum(Number(req.query.beds), 'beds');
         if(error) return {error};
     }
-
+    
+    // Value of 5 represents "5 or more" baths
     if(req.query.baths){
         if(req.query.baths == 5){
             conditions.push('LM_Dec_3 >= ?')
@@ -100,7 +102,8 @@ function handleFiltering(req, res){
 };
 
 function handleSorting(req, res){
-    //add order by for sorting to api call
+
+    // Maps user-facing sort fields to allowed database columns
     if(req.query.sort){
         const sortColumns = {
             date: "ListingContractDate",
@@ -143,6 +146,8 @@ propertiesRouter.get('/', async (req,res) => {
             countQuery += ' WHERE ' + conditions.join(' AND ');
         }
 
+        // Runs a seperate count query so the frontend can determine the total
+        // amount of matching properties independant from the current page
         const [countRows] = await pool.query(
             countQuery,values
         )
@@ -154,7 +159,7 @@ propertiesRouter.get('/', async (req,res) => {
 
         sqlQuery += ' LIMIT ? OFFSET ?';
 
-        //Uses parameterized query to defend against SQLi
+        //Uses parameterized values to prevent SQL injection
         const [results] = await pool.query(
             sqlQuery,values
         )
@@ -221,7 +226,7 @@ propertiesRouter.get('/:id', async (req,res) => {
             return res.status(400).send('id must be a valid number!');
         }
 
-        //Uses parameterized query to defend against SQLi
+        //Uses parameterized values to prevent SQL injection
         const [results] = await pool.query(
             sqlQuery,id
         )
@@ -248,6 +253,8 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
             return res.status(400).send("IDs must be valid numbers!");
         }
 
+        // Create one parameter placeholder for each ID so the IDs can be safely
+        // passed to the query rather than injecting them directly into SQL
         const marks = ids.map(() => '?').join(',');
 
         let sqlQuery = ` 
@@ -262,7 +269,7 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
 
         const [conditions, values, limit, offset] = filtering;
 
-        //construct query
+        // Add any requested filters and sorting to the ID-based query
         if (conditions.length !== 0){
             sqlQuery += '   AND '
             sqlQuery += conditions.join(' AND ');
@@ -273,7 +280,7 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
             sqlQuery += ` ORDER BY ${column} ${direction}`;
         }
 
-        //Uses parameterized query to defend against SQLi
+        //Uses parameterized values to prevent SQL injection
         const [results] = await pool.query(
             sqlQuery,[...ids, ...values]
         )

@@ -36,47 +36,54 @@ function NaturalSearchPage() {
         changeItemsPerPage
       } = usePagination(properties.total);
 
+    // Apply new filters and reset the results to the first page
     function handleSearch(tempFilters){
         setFilters(tempFilters);
         setSort('');
         changeCurrentPage(1);
     } 
 
+    // Abort the previous request when a new search, pagination change, or sort occurs
     const controller = useRef(null);
-      useEffect(() => {
-    
-        if(controller.current != null){
-          controller.current.abort();
+
+    // Reload properties whenever the search filters, pagination, or sorting change
+    useEffect(() => {
+    if(controller.current != null){
+        controller.current.abort();
+    }
+
+    controller.current = new AbortController();
+
+    async function loadProperties(){
+        try{
+        setLoading(true);
+        
+        // Build the API request using the current filters, pagination, and sorting
+        const params = {...filters, offset: offset, limit: pagination.itemsPerPage, sort: sort};
+
+        const data = await fetchFilteredProperties(params, controller.current.signal);
+        setProperties(data);
+
+        setError(null)
+        setLoading(false);
+        } catch(error){
+        if(error.name === "AbortError") return;
+
+        console.error(error.message);
+        setError(error);
+        setLoading(false);
         }
-    
-        controller.current = new AbortController();
-    
-        async function loadProperties(){
-          try{
-            setLoading(true);
-            
-            const params = {...filters, offset: offset, limit: pagination.itemsPerPage, sort: sort};
-    
-            const data = await fetchFilteredProperties(params, controller.current.signal);
-            setProperties(data);
-    
-            setError(null)
-            setLoading(false);
-          } catch(error){
-            if(error.name === "AbortError") return;
-    
-            console.error(error.message);
-            setError(error);
-            setLoading(false);
-          }
-        };
-    
-        loadProperties();
-      },[filters, pagination.currentPage, pagination.itemsPerPage, offset, sort])
+    };
+
+    loadProperties();
+    },[filters, pagination.currentPage, pagination.itemsPerPage, offset, sort])
 
     return(
         <div className="search-page">
+
+            // Natural-language search and manual filters share the same property results
             <AiSearch filters={filters} onSearch={handleSearch}></AiSearch>
+            
             <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
             
             
