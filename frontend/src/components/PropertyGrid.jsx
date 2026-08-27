@@ -6,7 +6,7 @@ function PropertyGrid({properties}){
         <div 
             className='properties-grid'>  
                 {properties.map(property =>
-                    <Link key={property.id} to={`/property/${property.L_ListingID}`}>
+                    <Link key={property.L_ListingID} to={`/property/${property.L_ListingID}`}>
                         <PropertyCard property={property}></PropertyCard>
                     </Link>
                 )}

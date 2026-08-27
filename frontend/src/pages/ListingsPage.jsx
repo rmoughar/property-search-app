@@ -9,7 +9,7 @@ import PropertyListControls from "../components/PropertyListControls";
 import usePagination from "../hooks/usePagination";
 
 function ListingsPage() {
-  const [properties, setProperties] = useState({results: []});
+  const [properties, setProperties] = useState({total:0, results: []});
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -104,9 +104,7 @@ function ListingsPage() {
       )}
 
 
-      {totalPages > 1 && (
-        <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
-      )}
+    <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
       
     </div>
   )

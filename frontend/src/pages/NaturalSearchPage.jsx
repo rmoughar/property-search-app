@@ -9,7 +9,7 @@ import AiSearch from "../components/AiSearch";
 
 
 function NaturalSearchPage() {
-    const [properties, setProperties] = useState({results: []});
+    const [properties, setProperties] = useState({total: 0, results: []});
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -34,7 +34,7 @@ function NaturalSearchPage() {
         offset,
         changeCurrentPage,
         changeItemsPerPage
-      } = usePagination(properties.length);
+      } = usePagination(properties.total);
 
     function handleSearch(tempFilters){
         setFilters(tempFilters);
@@ -106,9 +106,7 @@ function NaturalSearchPage() {
             )}
 
 
-            {totalPages > 1 && (
-                <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
-            )}
+            <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
       
         </div>
     )

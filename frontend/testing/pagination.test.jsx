@@ -13,13 +13,14 @@ describe("pagination", () => {
     afterEach(() => {
         cleanup();
     })
+
     test("renders pagination controls + shows one elipses near the beggining", () => {
         
         render(
             <Pagination
-            currentPage={1}
-            totalPages={10}
-            changeCurrentPage={mockChangePage}>
+                currentPage={1}
+                totalPages={10}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
 
@@ -39,9 +40,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={29}
-            totalPages={30}
-            changeCurrentPage={mockChangePage}>
+                currentPage={29}
+                totalPages={30}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
 
@@ -87,9 +88,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={48}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={48}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
 
@@ -101,9 +102,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={2}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={2}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
 
@@ -115,9 +116,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={1}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={1}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
         const button = screen.getByText('<');
@@ -129,9 +130,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={50}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={50}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
         const button = screen.getByText('>');
@@ -143,9 +144,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={2}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={2}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
         
@@ -158,9 +159,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={2}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={2}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
         
@@ -173,9 +174,9 @@ describe("pagination", () => {
         
         render(
             <Pagination
-            currentPage={2}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={2}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
         
@@ -188,9 +189,9 @@ describe("pagination", () => {
 
         render(
             <Pagination
-            currentPage={2}
-            totalPages={50}
-            changeCurrentPage={mockChangePage}>
+                currentPage={2}
+                totalPages={50}
+                changeCurrentPage={mockChangePage}>
             </Pagination>
         )
 
@@ -207,6 +208,20 @@ describe("pagination", () => {
         expect(input).toHaveValue('15');
         expect(mockChangePage).toHaveBeenCalledWith(15);
 
+
+    })
+
+    test('is hidden when there is only one page', () => {
+        render(
+            <Pagination
+                currentPage={1}
+                totalPages={1}
+                changeCurrentPage={mockChangePage}>
+            </Pagination>
+        );
+
+        expect(screen.queryByText("<")).not.toBeInTheDocument();
+        expect(screen.queryByText(">")).not.toBeInTheDocument();
 
     })
 });
