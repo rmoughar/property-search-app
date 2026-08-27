@@ -81,7 +81,7 @@ function NaturalSearchPage() {
     return(
         <div className="search-page">
 
-            // Natural-language search and manual filters share the same property results
+            {/* Natural-language search and manual filters share the same property results */}
             <AiSearch filters={filters} onSearch={handleSearch}></AiSearch>
             
             <PropertyFilters filters={filters} setFilters={setFilters} onSearch={handleSearch}></PropertyFilters>
