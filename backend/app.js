@@ -7,8 +7,9 @@ import searchRouter from "./routes/search.js";
 const app = express();
 const allowedOrigins = [
     'http://127.0.0.1:5173',
-    'http://localhost:4005'
-]
+    'http://localhost:4005',
+    process.env.FRONTEND_URL
+].filter(Boolean);
 
 app.use(cors({origin: allowedOrigins}));
 app.use(express.json());
