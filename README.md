@@ -686,4 +686,5 @@ Jest supports collecting coverage with the `--coverage` flag, including coverage
 - Move frontend API/CORS configuration into environment variables to make local development and deployment easier to configure.
 - Add production deployment configuration for the frontend, backend, database, and external API integration.
 - Preserve the user's previous page and search state when navigating to property details so returning from a property restores the page they came from, such as natural-language search results, favorites, or filtered listings.
+- Add a clear all favorites button on the favorites page.
 
