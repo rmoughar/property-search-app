@@ -41,7 +41,7 @@ function PropertyImageCarousel({images}) {
                 </div>
             ) : (<></>)}
 
-            // Display the current image when available and fall back if it fails to load
+            {/* // Display the current image when available and fall back if it fails to load */}
             {image && !imageError ? (
                 <img
                     className="current-image"
