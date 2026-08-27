@@ -1,5 +1,7 @@
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 export async function fetchFilteredProperties(filters, signal){
-  let url = '/api/properties?'
+  let url = `${API_URL}/api/properties?`
   
   Object.entries(filters).forEach(([key, value]) => {
     if(value === '') return;
@@ -18,7 +20,7 @@ export async function fetchFilteredProperties(filters, signal){
 }
 
 export async function fetchPropertyById(id) {
-  let url = '/api/properties/'
+  let url = `${API_URL}/api/properties/`
   
   url += id;
   
@@ -34,7 +36,7 @@ export async function fetchPropertyById(id) {
 }
 
 export async function fetchOpenHouseById(id) {
-  let url = `/api/properties/${id}/openhouses`
+  let url = `${API_URL}/api/properties/${id}/openhouses`
   
   const response = await fetch(url);
   
@@ -49,7 +51,7 @@ export async function fetchOpenHouseById(id) {
 
 export async function fetchMultipleProperties(ids, filters = {}, signal) {
   const queryIDS = ids.join(',')
-  let url = `/api/properties/ids/${queryIDS}?`;
+  let url = `${API_URL}/api/properties/ids/${queryIDS}?`;
 
   Object.entries(filters).forEach(([key, value]) => {
     if(value === '') return;
@@ -68,7 +70,7 @@ export async function fetchMultipleProperties(ids, filters = {}, signal) {
 }
 
 export async function fetchNaturalFilters(query){
-    const url = '/api/search/natural';
+    const url = `${API_URL}/api/search/natural`;
 
     const response = await fetch(url, {
         method:'POST',
