@@ -15,6 +15,7 @@ function PropertyDetailPage() {
     const {isFavorite, toggleFavorite} = useContext(FavoritesContext);
     const [loading, setLoading] = useState(true);
 
+    // Prefer validated photos wehn available, otherwise fall back to original photos list
     function loadPhotos(){
         try{
             return property.ValidatedPhotos ? 
@@ -28,6 +29,7 @@ function PropertyDetailPage() {
         }
     }
     
+    // Load the property and its associated openhouses when the property ID changes
     useEffect(() => {
         async function loadData(){
             try{
@@ -50,6 +52,7 @@ function PropertyDetailPage() {
         loadData();
     }, [params.id]);    
 
+    // Display "N/A" when a property field is missing
     function validateDetail(detail){
         return detail != null ? detail : "N/A"
     };
@@ -60,6 +63,7 @@ function PropertyDetailPage() {
         )
     }
 
+    // Fields displayed in the expandable Property Details section
     const propertyDetails = [
         {label: "Property Type", value: property.L_Type_},
         {label: "Status", value: property.L_Status},
@@ -79,6 +83,7 @@ function PropertyDetailPage() {
         {label: "Cooling", value: property.Cooling},
     ]
 
+    // Fields displayed in the expandable Listing Details section
     const listingDetails = [
         {label: "MLS ID", value: property.L_ListingID},
         {label: "Listed On", value: property.L_ListingContractDate},
@@ -100,8 +105,6 @@ function PropertyDetailPage() {
             </div>
         )
     }
-
-
 
     const photos = loadPhotos();
 

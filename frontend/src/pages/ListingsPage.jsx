@@ -25,6 +25,7 @@ function ListingsPage() {
     offset: '0'
   });
 
+  // Apply new filters and rese the results to the first page
   function handleSearch(tempFilters){
     setFilters(tempFilters);
     setSort('');
@@ -41,7 +42,11 @@ function ListingsPage() {
     changeItemsPerPage
   } = usePagination(properties.total);
 
+  // Abort the previous request if the user changes filters or pagination
+  // before the previous request finishes
   const controller = useRef(null);
+
+  // Reload properties whenever the filters, pagination, or sorting change
   useEffect(() => {
 
     if(controller.current != null){
@@ -54,6 +59,7 @@ function ListingsPage() {
       try{
         setLoading(true);
         
+        // Combine the current filters, pagination, and sorting into the API parameters
         const params = {...filters, offset: offset, limit: pagination.itemsPerPage, sort: sort};
 
         const data = await fetchFilteredProperties(params, controller.current.signal);
