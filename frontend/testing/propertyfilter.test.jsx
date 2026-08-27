@@ -16,7 +16,7 @@ describe("propertyFilter", () => {
         cleanup();
     })
 
-    test("returns property data when the request succeeds", () => {
+    test("renders all filter inputs", () => {
         const filters = {city: '', zipcode: '', minPrice: '', maxPrice: '', beds: '', baths: ''};
 
         render(<PropertyFilters filters={filters} onSearch={mockSearch}/>);
@@ -29,32 +29,57 @@ describe("propertyFilter", () => {
         expect(screen.getByLabelText("Baths:")).toBeInTheDocument();
     });
 
-    test("search updates filters object", () => {
-        const filters = {city: '', 
+    test("calls onSearch with entered filters", () => {
+        const filters = {
+            city: '', 
             zipcode: '', 
             minPrice: '', 
             maxPrice: '', 
             beds: '', 
-            baths: ''};
+            baths: ''
+        };
 
-        render(<PropertyFilters filters={filters} 
-            onSearch={mockSearch}/>);
+        render(
+            <PropertyFilters 
+                filters={filters} 
+                onSearch={mockSearch}
+            />
+        );
 
-        const input = screen.getByPlaceholderText('City');
-        fireEvent.change(input, {
+        fireEvent.change(screen.getByPlaceholderText('City'), {
             target: {value: 'Escondido'},
         });
+
+        fireEvent.change(screen.getByPlaceholderText('ZIP Code'), {
+            target: {value: '92025'},
+        });
+
+        fireEvent.change(screen.getByPlaceholderText('Min Price'), {
+            target: {value: '100000'},
+        });
+
+        fireEvent.change(screen.getByPlaceholderText('Max Price'), {
+            target: {value: '500,000'},
+        });
+
+        fireEvent.change(screen.getByLabelText('Beds:'), {
+            target: {value: '3'},
+        });
+
+        fireEvent.change(screen.getByLabelText('Baths:'), {
+            target: {value: '2'},
+        });
+
         fireEvent.click(screen.getByText("Search"));
 
         expect(mockSearch).toHaveBeenCalledTimes(1);
-        expect(input.value).toBe('Escondido');
         expect(mockSearch).toHaveBeenCalledWith({
             city: 'Escondido',
-            zipcode: '',
-            minPrice: '',
-            maxPrice: '',
-            beds: '',
-            baths: ''
+            zipcode: '92025',
+            minPrice: 100000,
+            maxPrice: 500000,
+            beds: 3,
+            baths: 2
         })
     });
 
@@ -71,6 +96,14 @@ describe("propertyFilter", () => {
 
         fireEvent.click(screen.getByText("Clear"))
 
+
+        expect(screen.getByPlaceholderText("City")).toHaveValue('');
+        expect(screen.getByPlaceholderText("ZIP Code")).toHaveValue('');
+        expect(screen.getByPlaceholderText("Min Price")).toHaveValue('');
+        expect(screen.getByPlaceholderText("Max Price")).toHaveValue('');
+        expect(screen.getByLabelText("Beds:")).toHaveValue('');
+        expect(screen.getByLabelText("Baths:")).toHaveValue('');
+        
         expect(mockSearch).toHaveBeenCalledWith({
             city: '',
             zipcode: '',

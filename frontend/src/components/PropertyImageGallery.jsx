@@ -3,7 +3,8 @@ import './PropertyImageGallery.css'
 
 function PropertyImageGallery({images}) {
     const [currentImage, setCurrentImage] = useState(0);
-    const [failedImagaes, setFailedImages] = useState(new Set());
+    // Track failed image URLs
+    const [failedImages, setFailedImages] = useState(new Set());
     const image = images[currentImage]
     const [lightbox, setLightBox] = useState(false);
     const thumbnailRef = useRef(null);
@@ -15,6 +16,8 @@ function PropertyImageGallery({images}) {
             return updated;
         })
     }
+
+    // Keep the active thumbnail visible when the selected image changes
     useEffect(() => {
         const activeThumbnail = thumbnailRef.current?.querySelector(".active-thumbnail");
 
@@ -25,7 +28,9 @@ function PropertyImageGallery({images}) {
         });
     }, [currentImage])
 
+    // Allow lightbox to be controlled with arrow keys and Escape
     useEffect(() => {
+        // Add keyboard listener only while lightbox is open
         if(!lightbox) return;
 
         function handleKeyDown(e){
@@ -57,7 +62,7 @@ function PropertyImageGallery({images}) {
 
 
 
-                {image && !failedImagaes.has(image) ? (
+                {image && !failedImages.has(image) ? (
                     <img
                         className="main-image"
                         src={image} 
@@ -106,7 +111,7 @@ function PropertyImageGallery({images}) {
                     ref={thumbnailRef}
                     className="thumbnail-strip">
                         {images.map((image,index) => (
-                            image && !failedImagaes.has(image) ? (
+                            image && !failedImages.has(image) ? (
                                 <img
                                     key={index}
                                     className={`thumbnail-image ${currentImage === index ? "active-thumbnail" : ""}`}
@@ -178,16 +183,3 @@ function PropertyImageGallery({images}) {
 }
 
 export default PropertyImageGallery;
-
-
-{/* <div className="thumbnail-strip">
-                {images.map((image,index) =>
-                    <img
-                    key={index}
-                    className="thumbnail-image" 
-                    src={image}
-                    onClick={() =>
-                        setCurrentImage(index)
-                    }></img>
-                )}
-            </div> */}

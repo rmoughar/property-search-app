@@ -1,6 +1,8 @@
 import pool from '../config/pool.js';
 import { saveValidPhotos } from './photoValidator.js';
 
+// Finds properties whose photos have never been validated or haven't 
+// been checked within the last seven days
 async function findPropertiesNeedingValidation(){
     const [rows] = await pool.query(
         `SELECT L_ListingID
@@ -14,6 +16,7 @@ async function findPropertiesNeedingValidation(){
 } 
 
 export async function refreshPhotoValidations(){
+    // Continue processing batches until all properties are up to date.
     while (true){
         const properties = await findPropertiesNeedingValidation();
 
@@ -21,6 +24,7 @@ export async function refreshPhotoValidations(){
             break;
         }
 
+        // Validate each property's photos concurrently to speed up the refresh
         await Promise.all(
             properties.map(property =>
                 saveValidPhotos(property.L_ListingID)

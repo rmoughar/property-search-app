@@ -1,27 +1,31 @@
 import express from 'express';
 import pool from '../config/pool.js';
-import e from 'express';
+import { isValidNumber } from '../utils/validation.js';
 
 
 const propertiesRouter = express.Router();
 
 let sqlQuery = "SELECT * FROM rets_property"
 
+// Builds SQL filter conditions and their corresponding parameter values
+// Validates pagination parameters and provides default limit/offset values
 function handleFiltering(req, res){
     const conditions = [];
     const values = [];
     let limit = 20;
     let offset = 0;
 
-    //Confirms param validity and adds to values
+    // Validates numeric query parameters AND adds valid values to the parameter list
     function handleNum(input, condition){
         if(!(typeof input === 'number')){
-            return res.status(400).send(`${condition} must be a valid number!`)
+            return `${condition} must be a valid number!`
         }
         if(!(Number.isFinite(input))){
-            return res.status(400).send(`${condition} must be a finite number!`)
+            return `${condition} must be a finite number!`
         }
+
         values.push(input);
+        return null;
     };
     
     if(req.query.city){
@@ -29,64 +33,77 @@ function handleFiltering(req, res){
             values.push(req.query.city)
         }
 
-        if(req.query.zipcode){
-            conditions.push('L_Zip = ?')
-            handleNum(Number(req.query.zipcode), 'zipCode')
-        }
+    if(req.query.zipcode){
+        conditions.push('L_Zip = ?')
+        const error = handleNum(Number(req.query.zipcode), 'zipCode')
 
-        if(req.query.minPrice){
-            conditions.push('L_SystemPrice >= ?')
-            handleNum(Number(req.query.minPrice), 'minPrice');
-        }
+        if(error) return {error};
+    }
 
-        if(req.query.maxPrice){
-            conditions.push('L_SystemPrice <= ?')
-            handleNum(Number(req.query.maxPrice), 'maxPrice');
-        }
-
-        if(req.query.beds){
-            if(req.query.beds == 5){
-                conditions.push('L_Keyword2 >= ?')
-            }
-            else{
-                conditions.push('L_Keyword2 = ?')
-            }
-            
-            handleNum(Number(req.query.beds), 'beds');
-        }
-
-        if(req.query.baths){
-            if(req.query.baths == 5){
-                conditions.push('LM_Dec_3 >= ?')
-            }
-            else{
-                conditions.push('LM_Dec_3 = ?')
-            }
-            handleNum(Number(req.query.baths), 'baths');
-        }
-
-        if(req.query.limit){
-            limit = Number(req.query.limit);
-            if(limit <= 0){
-                return res.status(400).send(`Limit must be greater than 0!`);
-            }
-            handleNum(limit, 'limit');
-        }
-        else values.push(limit);
-
-        if(req.query.offset){
-            offset = Number(req.query.offset);
-            handleNum(offset, 'offset');
-        }
-        else values.push(offset); 
-
+    if(req.query.minPrice){
+        conditions.push('L_SystemPrice >= ?')
+        const error = handleNum(Number(req.query.minPrice), 'minPrice');
         
+        if(error) return {error};
+    }
 
-        return [conditions, values, limit, offset];
+    if(req.query.maxPrice){
+        conditions.push('L_SystemPrice <= ?')
+        const error = handleNum(Number(req.query.maxPrice), 'maxPrice');
+        if(error) return {error};
+    }
+
+    // Value of 5 represents "5 or more" beds
+    if(req.query.beds){
+        if(req.query.beds == 5){
+            conditions.push('L_Keyword2 >= ?')
+        }
+        else{
+            conditions.push('L_Keyword2 = ?')
+        }
+        
+        const error = handleNum(Number(req.query.beds), 'beds');
+        if(error) return {error};
+    }
+    
+    // Value of 5 represents "5 or more" baths
+    if(req.query.baths){
+        if(req.query.baths == 5){
+            conditions.push('LM_Dec_3 >= ?')
+        }
+        else{
+            conditions.push('LM_Dec_3 = ?')
+        }
+
+        const error = handleNum(Number(req.query.baths), 'baths');
+        if(error) return {error};
+    }
+
+    if(req.query.limit){
+        limit = Number(req.query.limit);
+        if(limit <= 0){
+            return {error: `Limit must be greater than 0!`};
+        }
+        const error = handleNum(limit, 'limit');
+        if(error) return {error};
+    }
+    else values.push(limit);
+
+    if(req.query.offset){
+        offset = Number(req.query.offset);
+        const error = handleNum(offset, 'offset');
+        if(error) return {error};
+    }
+    else values.push(offset); 
+
+    
+
+    return [conditions, values, limit, offset];
 };
 
 function handleSorting(req, res){
-    //add order by for sorting to api call
+
+    // Maps user-facing sort fields to allowed database columns
     if(req.query.sort){
         const sortColumns = {
             date: "ListingContractDate",
@@ -118,13 +135,19 @@ propertiesRouter.get('/', async (req,res) => {
         let sqlQuery = "SELECT * FROM rets_property";
         let countQuery = "SELECT COUNT(*) FROM rets_property";
         
-        const [conditions, values] = handleFiltering(req, res);
+        const filtering = handleFiltering(req, res);
+
+        if(filtering.error) return res.status(400).send(filtering.error);
+
+        const [conditions, values, limit, offset] = filtering;
 
         if (conditions.length !== 0){
             sqlQuery += ' WHERE ' + conditions.join(' AND ');
             countQuery += ' WHERE ' + conditions.join(' AND ');
         }
 
+        // Runs a seperate count query so the frontend can determine the total
+        // amount of matching properties independant from the current page
         const [countRows] = await pool.query(
             countQuery,values
         )
@@ -136,15 +159,15 @@ propertiesRouter.get('/', async (req,res) => {
 
         sqlQuery += ' LIMIT ? OFFSET ?';
 
-        //Uses parameterized query to defend against SQLi
+        //Uses parameterized values to prevent SQL injection
         const [results] = await pool.query(
             sqlQuery,values
         )
         
         res.json({
             total: countRows[0]["COUNT(*)"],
-            limit: req.query.limit ?? limit,
-            offset: req.query.offset ?? offset,
+            limit: limit,
+            offset: offset,
             results: results
         });
     }
@@ -162,20 +185,13 @@ propertiesRouter.get('/:id/openhouses', async (req,res) => {
         const id = req.params.id;
 
         //Confirms param validity
-        function handleNum(input, condition){
-            if(!(Number.isInteger(input))){
-                return res.status(400).send(`${condition} must be a valid number!`);
-            }
-            if(!(Number.isFinite(input))){
-                return res.status(400).send(`${condition} must be a finite number!`);
-            }
+        if(!isValidNumber(Number(id))){
+            return res.status(400).send('id must be a valid number!')
+        }
 
-            if(input <= 0){
-                return res.status(400).send(`${condition} must be a positive number!`)
-            }
-        };
-
-        handleNum(Number(id), 'id');
+        if(Number(id) <= 0){
+            return res.status(400).send('id must be a positive number!');
+        }
 
         const [property] = await pool.query(
             validQuery,[id]
@@ -206,18 +222,11 @@ propertiesRouter.get('/:id', async (req,res) => {
         let id = req.params.id;
 
         //Confirms param validity
-        function handleNum(input, condition){
-            if(!(typeof input === 'number')){
-                return res.status(400).send(`${condition} must be a valid number!`)
-            }
-            if(!(Number.isFinite(input))){
-                return res.status(400).send(`${condition} must be a finite number!`)
-            }
-        };
+        if(!isValidNumber(Number(id))){
+            return res.status(400).send('id must be a valid number!');
+        }
 
-        handleNum(Number(id), 'id');
-
-        //Uses parameterized query to defend against SQLi
+        //Uses parameterized values to prevent SQL injection
         const [results] = await pool.query(
             sqlQuery,id
         )
@@ -240,10 +249,12 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
     try{
         //Pull and confirm ids validity
         const ids = req.params.ids.split(',');
-        if (ids.some(id => !Number.isFinite(Number(id)))) {
+        if (ids.some(id => !isValidNumber(Number(id)))) {
             return res.status(400).send("IDs must be valid numbers!");
         }
 
+        // Create one parameter placeholder for each ID so the IDs can be safely
+        // passed to the query rather than injecting them directly into SQL
         const marks = ids.map(() => '?').join(',');
 
         let sqlQuery = ` 
@@ -252,9 +263,13 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
             WHERE L_ListingID IN (${marks})
         `;
         
-        const [conditions, values, limit, offset] = handleFiltering(req, res);
+        const filtering = handleFiltering(req, res);
 
-        //construct query
+        if(filtering.error) return res.status(400).send(filtering.error);
+
+        const [conditions, values, limit, offset] = filtering;
+
+        // Add any requested filters and sorting to the ID-based query
         if (conditions.length !== 0){
             sqlQuery += '   AND '
             sqlQuery += conditions.join(' AND ');
@@ -265,7 +280,7 @@ propertiesRouter.get('/ids/:ids', async (req,res) => {
             sqlQuery += ` ORDER BY ${column} ${direction}`;
         }
 
-        //Uses parameterized query to defend against SQLi
+        //Uses parameterized values to prevent SQL injection
         const [results] = await pool.query(
             sqlQuery,[...ids, ...values]
         )

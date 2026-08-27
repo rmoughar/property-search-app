@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./PropertyFilters.css"
 import { useEffect } from "react";
 
+// Remove formatting characters so the API recieves a numeric price value
 function formatPrice(value){
   const digits = value.replace(/\D/g, '');
 

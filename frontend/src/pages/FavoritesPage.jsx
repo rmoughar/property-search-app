@@ -114,9 +114,7 @@ function FavoritesPage() {
                 </div>
             )}
 
-            {totalPages > 1 && (
-                <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
-            )}
+            <Pagination currentPage={pagination.currentPage} totalPages={totalPages} changeCurrentPage={changeCurrentPage}></Pagination>
           
         </div>
     )

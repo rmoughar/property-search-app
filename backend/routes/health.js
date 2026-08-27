@@ -1,7 +1,6 @@
 import express from 'express';
 import pool from '../config/pool.js';
 
-
 const healthRouter = express.Router();
 
 healthRouter.get('/', async (req,res) => {

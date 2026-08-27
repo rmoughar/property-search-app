@@ -47,7 +47,7 @@ export async function fetchOpenHouseById(id) {
   return result;
 }
 
-export async function fetchMultipleProperties(ids, filters, signal) {
+export async function fetchMultipleProperties(ids, filters = {}, signal) {
   const queryIDS = ids.join(',')
   let url = `/api/properties/ids/${queryIDS}?`;
 

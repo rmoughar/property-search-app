@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import './Pagination.css';
 
+// Build a compact page list with ellipses when there are too many pages to display
 function buildPageNumbers(currentPage, totalPages){
     const pages = [1, totalPages];
     
     if(currentPage <=3){
-        //beginning
+        // Show the first several pages when near the beginning
         pages.push(2,3,4,5);
     } else if (currentPage >= totalPages -2) {
-        //end
+        // Show the last several pages when near the end
         pages.push(
             totalPages - 4,
             totalPages - 3,
@@ -16,7 +17,7 @@ function buildPageNumbers(currentPage, totalPages){
             totalPages - 1
         );
     } else {
-        //middle
+        // Show pages around the current page
         pages.push(
             currentPage - 1, 
             currentPage, 
@@ -25,6 +26,8 @@ function buildPageNumbers(currentPage, totalPages){
     
     pages.sort((a,b) => a - b);
     const sortedPages = [...new Set(pages)].filter(item => (item > 0 && item <= totalPages));
+
+    // Insert ellipses where there are gaps between displayed page numbers
     for(let i = 0; i < sortedPages.length - 1; i++){
         if((sortedPages[i+1] - sortedPages[i]) > 1){
             sortedPages.splice(i+1, 0, '...');
@@ -35,9 +38,15 @@ function buildPageNumbers(currentPage, totalPages){
 }
 
 function Pagination( {currentPage, totalPages, changeCurrentPage} ) {
-    const pageNumbers = buildPageNumbers(currentPage, totalPages);
     const [jumpInput, setJumpInput] = useState(null);
     const [inputValue, setInputValue] = useState(null);
+    
+    if(totalPages <= 1){
+        return null;
+    }
+
+    const pageNumbers = buildPageNumbers(currentPage, totalPages);
+    
 
     function handleButton(newPage){
         changeCurrentPage(newPage);

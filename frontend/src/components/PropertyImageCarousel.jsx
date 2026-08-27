@@ -4,8 +4,9 @@ import './PropertyImageCarousel.css'
 function PropertyImageCarousel({images}) {
     const [currentImage, setCurrentImage] = useState(0);
     const [imageError, setImageError] = useState(null)
-    const image = images[currentImage]
 
+    // Show the fallback message if the current image fails to load
+    const image = images[currentImage]
 
     return(
         <div className="carousel">
@@ -40,8 +41,7 @@ function PropertyImageCarousel({images}) {
                 </div>
             ) : (<></>)}
 
-            
-
+            {/* // Display the current image when available and fall back if it fails to load */}
             {image && !imageError ? (
                 <img
                     className="current-image"
