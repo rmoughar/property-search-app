@@ -4,7 +4,7 @@ A full-stack property search app built for IDX Exchange. The application allows 
 
 ## Screenshot
 
-[screenshot]
+<img width="1466" height="747" alt="image" src="https://github.com/user-attachments/assets/a6dd38bf-6a72-474f-b3e9-9590d61f8734" />
 
 ## Features
 
