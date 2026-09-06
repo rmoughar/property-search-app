@@ -11,7 +11,7 @@ app.listen(port, "0.0.0.0", (err) => {
     }
     console.log(`Server listening on port ${port}`);
 
-    refreshPhotoValidations().catch(error => {
+    /*refreshPhotoValidations().catch(error => {
         console.error('Photo validation refresh failed:', error);
-    })
+    })*/
 });
